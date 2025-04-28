@@ -1,4 +1,3 @@
-// src/app/components/LeadsAreaChart.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,19 +25,19 @@ import {
 } from "@/components/ui/chart";
 
 interface LeadData {
-  criadoEm: string;
+  createdAt: string;
 }
 
 // chave “Mês Ano” ex: “abr 2025”
 const getMonthKey = (d: Date) =>
   d.toLocaleString("pt-BR", { month: "short", year: "numeric" });
 
-// gera uma série de N eventos de 2 em 2 meses até hoje
-function buildBiMonthlySeries(events: number) {
+// gera últimos 6 meses consecutivos
+function buildMonthlySeries(months: number) {
   const now = new Date();
-  return Array.from({ length: events }, (_, i) => {
+  return Array.from({ length: months }, (_, i) => {
     const dt = new Date(now);
-    dt.setMonth(now.getMonth() - (events - 1 - i) * 2);
+    dt.setMonth(now.getMonth() - (months - 1 - i));
     return getMonthKey(dt);
   });
 }
@@ -48,7 +47,6 @@ export default function LeadsAreaChart() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [total, setTotal] = useState(0);
 
-  // 1) fetch dos leads
   useEffect(() => {
     fetch("/api/leads")
       .then((res) => {
@@ -59,12 +57,11 @@ export default function LeadsAreaChart() {
       .catch(console.error);
   }, []);
 
-  // 2) agrupar por mês ano
   useEffect(() => {
     const map: Record<string, number> = {};
     let tot = 0;
     rawData.forEach((lead) => {
-      const dt = new Date(lead.criadoEm);
+      const dt = new Date(lead.createdAt);
       const key = getMonthKey(dt);
       map[key] = (map[key] || 0) + 1;
       tot++;
@@ -73,29 +70,26 @@ export default function LeadsAreaChart() {
     setTotal(tot);
   }, [rawData]);
 
-  // 3) definir série de 6 batismos (12 meses, pulando de 2 em 2 meses)
-  const series = buildBiMonthlySeries(6);
+  const series = buildMonthlySeries(6); // últimos 6 meses consecutivos
 
-  // 4) montar chartData
   const chartData = series.map((month) => ({
     month,
     inscritos: counts[month] ?? 0,
   }));
 
-  // configuração de cor
   const chartConfig = {
     inscritos: {
       label: "Inscritos",
-      color: "#22d3ee", // cyan-400
+      color: "#22d3ee",
     },
   } as const;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-gray-800">Inscritos por Batismo</CardTitle>
+        <CardTitle className="text-gray-800">Inscritos para o Dia da Visão</CardTitle>
         <CardDescription>
-          Últimos 6 eventos (total: <strong>{total}</strong>)
+          Últimos 6 meses — <strong>{total}</strong> inscritos
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -147,7 +141,7 @@ export default function LeadsAreaChart() {
       <CardFooter className="flex items-center gap-2 text-sm">
         <TrendingUp className="h-4 w-4 text-gray-800" />
         <span className="text-gray-800">
-          Média por evento:{" "}
+          Média mensal:{" "}
           {(total / series.filter((m) => counts[m] > 0).length).toFixed(1)}
         </span>
       </CardFooter>

@@ -1,6 +1,6 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Etapa1 } from "@/app/components/Etapa1";
 import { Etapa2 } from "@/app/components/Etapa2";
 import { AnimatePresence } from "framer-motion";
@@ -12,49 +12,50 @@ export default function Formulario() {
   const [form, setForm] = useState({
     nome: "",
     whatsapp: "",
-    sexo: "",
     email: "",
-    dataNascimento: "",
+    sexo: "",
+    voluntario: false,
     camiseta: "",
     tipoAula: "",
-    aceiteLgpd: false,
+    membroDesde: "",
+    voluntarioDesde: "",
+    ministerio: "",
+    batizado: false,
+    batizadoDesde: "",
   });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const target = e.target as HTMLInputElement;
-    const { name, value, type, checked } = target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const target = e.target as HTMLInputElement | HTMLSelectElement;
+    const name = target.name;
+    const value = target.type === "checkbox" ? (target as HTMLInputElement).checked : target.value;
+  
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
-
   const handleSubmit = async () => {
-    const res = await fetch("/api/leads", {
-      method: "POST",
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
-      const linkWhatsApp = `https://chat.whatsapp.com/IX6tQK6C0k8Ex4SFnjbrUt`;
-      window.location.href = linkWhatsApp;
-    } else {
-      alert("Erro ao enviar. Tente novamente.");
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+  
+      if (res.ok) {
+        console.log("Lead enviado!");
+      } else {
+        console.error("Erro ao enviar lead");
+      }
+    } catch (error) {
+      console.error("Erro:", error);
     }
   };
 
-  useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
-  }, [step]);
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[url('https://i.imgur.com/7I3rMdw.png')] bg-cover bg-no-repeat">
-      <div
-        ref={ref}
-        className="w-full max-w-2xl bg-white text-white shadow-xl border border-neutral-700 rounded-3xl p-8"
-      >
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div ref={ref} className="p-6 max-w-xl mx-auto text-white">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <Etapa1
@@ -76,5 +77,5 @@ export default function Formulario() {
         </AnimatePresence>
       </div>
     </div>
-  );
+      );
 }

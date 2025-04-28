@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface FormData {
@@ -8,10 +7,13 @@ interface FormData {
   whatsapp: string;
   sexo: string;
   email: string;
-  dataNascimento: string;
+  voluntario: boolean;
   camiseta: string;
-  tipoAula: string;
-  aceiteLgpd: boolean;
+  membroDesde: string;
+  voluntarioDesde: string;
+  ministerio: string;
+  batizado: boolean;
+  batizadoDesde: string;
 }
 
 interface Etapa2Props {
@@ -22,18 +24,22 @@ interface Etapa2Props {
 }
 
 export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
-  const [showLgpd, setShowLgpd] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const isValid = form.membroDesde &&
+    (
+      form.voluntario
+        ? form.voluntarioDesde && form.ministerio && form.batizadoDesde
+        : (!form.batizado || (form.batizado && form.batizadoDesde))
+    );
 
-  const isValid = form.camiseta && form.tipoAula && form.aceiteLgpd;
-
-  useEffect(() => {
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && isValid) onSubmit();
-    };
-    window.addEventListener("keydown", handleEnter);
-    return () => window.removeEventListener("keydown", handleEnter);
-  }, [isValid, onSubmit]);
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value === "true"; // transforma string em boolean
+    handleChange({
+      target: {
+        name: "batizado",
+        value,
+      },
+    } as React.ChangeEvent<any>);
+  };
 
   return (
     <motion.div
@@ -41,89 +47,134 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">Sobre sua participação</h2>
+      <p className="text-2sm text-gray-400 mb-2">2 →</p>
+      <h2 className="text-xl font-regular mb-6 text-gray-800">
+        Agora queremos saber um pouco da sua caminhada com Deus.
+      </h2>
 
-      <label className="block text-sm font-medium text-gray-700 mb-1">Tamanho da camiseta *</label>
-      <select
-        name="camiseta"
-        value={form.camiseta}
+      <label className="block text-xl font-light text-gray-700">Membro desde (mês/ano) *</label>
+      <input
+        name="membroDesde"
+        value={form.membroDesde}
         onChange={handleChange}
-        className="mb-4 w-full border-b border-gray-300 bg-transparent text-gray-800 focus:outline-none focus:border-blue-500 py-2 cursor-pointer"
+        placeholder="04/2020"
+        className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
         required
-      >
-        <option value="">Selecione</option>
-        <option value="P">P</option>
-        <option value="M">M</option>
-        <option value="G">G</option>
-        <option value="GG">GG</option>
-        <option value="EXG">EXG</option>
-      </select>
+      />
 
-      <label className="block text-sm font-medium text-gray-700 mb-1">Como você gostaria de participar das aulas? *</label>
-      <select
-        name="tipoAula"
-        value={form.tipoAula}
-        onChange={handleChange}
-        className="mb-4 w-full border-b border-gray-300 bg-transparent text-gray-800 focus:outline-none focus:border-blue-500 py-2 cursor-pointer"
-        required
-      >
-        <option value="">Selecione</option>
-        <option value="Quarta-Feira - 30/04 - 19:30">Aula Presencial (Quarta-Feira - 30/04 - 19:30)</option>
-        <option value="Sábado - 03/05 - 15:00">Aula Presencial (Sábado - 03/05 - 15:00)</option>
-        <option value="Online">Aula Online</option>
-      </select>
-
-      <div className="flex flex-col gap-2 mb-6">
-        <div className="flex items-start gap-3">
+      {form.voluntario ? (
+        <>
+          <label className="block text-xl font-light text-gray-700">Voluntário desde (mês/ano) *</label>
           <input
-            type="checkbox"
-            name="aceiteLgpd"
-            checked={form.aceiteLgpd}
+            name="voluntarioDesde"
+            value={form.voluntarioDesde}
             onChange={handleChange}
-            className="mt-1 cursor-pointer"
+            placeholder="07/2021"
+            className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
             required
           />
-          <label className="text-sm text-gray-700">
-            Sim, estou de acordo com o uso dos dados conforme a LGPD.
-          </label>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowLgpd(!showLgpd)}
-          className="text-sm text-blue-600 underline self-start cursor-pointer"
-        >
-          {showLgpd ? "Ocultar detalhes" : "Ler mais sobre a LGPD"}
-        </button>
-        {showLgpd && (
-          <p className="text-sm text-gray-600 bg-gray-100 p-3 rounded-xl">
-            Os dados fornecidos serão utilizados exclusivamente para fins de organização e comunicação sobre o batismo. Garantimos que suas informações não serão compartilhadas com terceiros e estão protegidas conforme a Lei Geral de Proteção de Dados (LGPD).
-          </p>
-        )}
-      </div>
 
-      <div className="flex justify-between gap-4">
+          <label className="block text-xl font-light text-gray-700">
+            Ministério que serve *
+            <label className="text-gray-600 text-[10px] ml-1">escolha apenas um</label>
+          </label>
+          <select
+            name="ministerio"
+            value={form.ministerio}
+            onChange={handleChange}
+            className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-purple-300 text-purple-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="Worship">Worship</option>
+            <option value="Integracao">Integração</option>
+            <option value="Vip">V.I.P</option>
+            <option value="Kids">Kids</option>
+            <option value="Creative">Creative</option>
+            <option value="Parking">Parking</option>
+            <option value="Teens">Teens</option>
+            <option value="RdkBrave">RdkBrave</option>
+            <option value="Lounge">Lounge</option>
+            <option value="Connect">Connect</option>
+            <option value="Producao">Produção</option>
+            <option value="Cerimonial">Cerimonial</option>
+            <option value="CampusOnline">Campus Online</option>
+            <option value="Casais">Casais</option>
+            <option value="ClinicaDaAlma">Clínica Da Alma</option>
+            <option value="Baby">Baby</option>
+            <option value="Coral">Coral</option>
+            <option value="Eventos">Eventos</option>
+            <option value="Store">Store</option>
+          </select>
+
+          <label className="block text-xl font-light text-gray-700">Batizado desde (mês/ano) *</label>
+          <input
+            name="batizadoDesde"
+            value={form.batizadoDesde}
+            onChange={handleChange}
+            placeholder="03/2019"
+            className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+            required
+          />
+        </>
+      ) : (
+        <>
+          <label className="block text-xl font-light text-gray-700 mb-2">É batizado? *</label>
+          <div className="flex gap-6 mb-10 text-purple-700 text-xl">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="batizado"
+                value="true"
+                checked={form.batizado === true}
+                onChange={handleRadioChange}
+              />
+              Sim
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="batizado"
+                value="false"
+                checked={form.batizado === false}
+                onChange={handleRadioChange}
+              />
+              Não
+            </label>
+          </div>
+
+          {form.batizado && (
+            <>
+              <label className="block text-xl font-light text-gray-700">Batizado desde (mês/ano) *</label>
+              <input
+                name="batizadoDesde"
+                value={form.batizadoDesde}
+                onChange={handleChange}
+                placeholder="08/2022"
+                className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+                required
+              />
+            </>
+          )}
+        </>
+      )}
+
+      <div className="flex justify-between mt-6">
         <button
           onClick={onBack}
-          className="w-1/2 bg-gray-300 hover:bg-gray-400 text-black font-semibold rounded-2xl py-3 px-5 transition cursor-pointer"
+          className="bg-purple-800 hover:bg-purple-600 text-white cursor-pointer font-bold py-2 px-4 rounded-md"
         >
           Voltar
         </button>
 
         <button
-          onClick={async () => {
-            if (loading || !isValid) return;
-            setLoading(true);
-            await onSubmit();
-            setLoading(false);
-          }}
-          disabled={!isValid || loading}
-          className={`w-1/2 font-semibold rounded-2xl py-3 px-5 transition ${
-            !isValid || loading
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+          onClick={onSubmit}
+          disabled={!isValid}
+          className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none ${
+            isValid ? 'bg-purple-800 hover:bg-purple-600 text-white cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
-          {loading ? 'Enviando...' : 'Enviar'}
+          Enviar →
         </button>
       </div>
     </motion.div>

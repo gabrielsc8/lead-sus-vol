@@ -47,6 +47,6 @@ export const authOptions: NextAuthOptions = {
   },
   secret: 'DU923NDU9NWUSAONSD39USI',
   pages: {
-    signIn: "/login",
+    signIn: "/admin/leads",
   },
 };

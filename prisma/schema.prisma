@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://comu4259_admin:cfcchurch3673db@comunidadedafe.org:3306/comu4259_leads"
+  url      = "mysql://comu4259_admin:cfcchurch3673db@comunidadedafe.org:3306/comu4259_diadavisao"
 }
 
 model User {
@@ -17,14 +17,16 @@ model User {
 }
 
 model Lead {
-  id               Int      @id @default(autoincrement())
-  nome             String
-  whatsapp         String
-  sexo             String
-  email            String
-  dataNascimento   DateTime
-  camiseta         String?
-  tipoAula         String?
-  aceiteLgpd       Boolean  @default(false)
-  criadoEm         DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  nome           String
+  whatsapp       String
+  email          String
+  sexo           String
+  membroDesde    String?
+  voluntario     Boolean? 
+  voluntarioDesde String?
+  ministerio     String?
+  batizado       Boolean?
+  batizadoDesde  String?
+  createdAt      DateTime @default(now())
 }

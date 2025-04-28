@@ -3,16 +3,18 @@
 
 import { motion } from "framer-motion";
 
-
 interface FormData {
   nome: string;
   whatsapp: string;
   sexo: string;
   email: string;
-  dataNascimento: string;
+  voluntario: boolean;
   camiseta: string;
-  tipoAula: string;
-  aceiteLgpd: boolean;
+  membroDesde: string;
+  voluntarioDesde: string;
+  ministerio: string;
+  batizado: boolean; // "sim" | "nao"
+  batizadoDesde: string;
 }
 
 interface Etapa1Props {
@@ -31,7 +33,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
     validatePhone(form.whatsapp) &&
     form.sexo &&
     validateEmail(form.email) &&
-    form.dataNascimento;
+    typeof form.voluntario === "boolean";
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, "").substring(0, 11);
@@ -45,16 +47,6 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
     if (d3) formatted += `-${d3}`;
     return formatted;
   };
-
- // useEffect(() => {
-  //  const handleKeyPress = (e: KeyboardEvent) => {
-  //    if (e.key.toLowerCase() === "a") handleChange({ target: { name: "sexo", value: "Masculino", type: "select-one" } } as any);
-  //    if (e.key.toLowerCase() === "b") handleChange({ target: { name: "sexo", value: "Feminino", type: "select-one" } } as any);
-  //    if (e.key === "Enter" && isValid) onNext();
-  //  };
-  //  window.addEventListener("keydown", handleKeyPress);
-  //  return () => window.removeEventListener("keydown", handleKeyPress);
-  // }, [handleChange, onNext, isValid]);
 
   return (
     <motion.div
@@ -71,7 +63,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
         placeholder="João da Silva"
         value={form.nome}
         onChange={handleChange}
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-blue-800 placeholder-blue-200 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-blue-800 focus:border-b-2' : 'border-red-500'}`}
+        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
         required
       />
 
@@ -91,7 +83,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
             }
           });
         }}
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-blue-800 placeholder-blue-200 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-blue-800 focus:border-b-2' : 'border-red-500'}`}
+        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none py-2 ${validatePhone(form.whatsapp) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
         required
       />
 
@@ -100,7 +92,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
         name="sexo"
         value={form.sexo}
         onChange={handleChange}
-        className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-blue-200 text-blue-800 focus:outline-none focus:border-blue-800 focus:border-b-2 py-2 cursor-pointer"
+        className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-purple-300 text-purple-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
         required
       >
         <option value="">Selecione</option>
@@ -115,26 +107,44 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
         value={form.email}
         onChange={handleChange}
         type="email"
-        className={`mb-11 font-light text-2xl w-full border-b bg-transparent text-blue-800 placeholder-blue-200 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-blue-800 focus:border-b-2' : 'border-red-500'}`}
+        className={`mb-11 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none py-2 ${validateEmail(form.email) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
         required
       />
 
-      <label className="block text-xl font-light text-gray-700">Data de nascimento *</label>
-      <input
-        name="dataNascimento"
-        value={form.dataNascimento}
-        onChange={handleChange}
-        type="date"
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-blue-800 placeholder-blue-200 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-blue-800 focus:border-b-2' : 'border-red-500'}`}
-        required
-      />
+      <label className="block text-xl font-light text-gray-700">Você é voluntário? *</label>
+      <div className="flex gap-6 mb-10 text-purple-700 text-xl">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="voluntario"
+            value="true"
+            checked={form.voluntario === true}
+            onChange={() =>
+              handleChange({ target: { name: "voluntario", value: true, type: "radio" } } as any)
+            }
+          />
+          Sim
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="voluntario"
+            value="false"
+            checked={form.voluntario === false}
+            onChange={() =>
+              handleChange({ target: { name: "voluntario", value: false, type: "radio" } } as any)
+            }
+          />
+          Não
+        </label>
+      </div>
 
       <button
         onClick={onNext}
         disabled={!isValid}
-        className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none cursor-pointer ${isValid ? 'bg-blue-800 hover:bg-blue-800 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+        className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none cursor-pointer ${isValid ? 'bg-purple-800 hover:bg-purple-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
       >
-        OK <span className="text-sm font-light"> ↵</span>
+        Próximo <span className="text-sm font-light"> ↵</span>
       </button>
     </motion.div>
   );

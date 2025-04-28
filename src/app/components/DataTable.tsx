@@ -1,4 +1,3 @@
-// src/app/components/DataTable.tsx
 "use client";
 
 import * as React from "react";
@@ -33,23 +32,24 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-// 1) Schema de validação
+// Schema corrigido
 export const schema = z.object({
   id: z.number(),
   nome: z.string(),
   email: z.string(),
   whatsapp: z.string(),
   sexo: z.string(),
-  dataNascimento: z.string(),
-  camiseta: z.string(),
-  tipoAula: z.string(),
-  aceiteLgpd: z.boolean(),
-  criadoEm: z.string(),
+  membroDesde: z.string(),
+  voluntario: z.boolean(),
+  voluntarioDesde: z.string(),
+  ministerio: z.string(),
+  batizado: z.string(),
+  batizadoDesde: z.string(),
+  createdAt: z.string(), 
 });
 
 type Lead = z.infer<typeof schema>;
 
-// 2) Hook para buscar os leads
 function useLeadsData() {
   const [data, setData] = React.useState<Lead[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -68,7 +68,6 @@ function useLeadsData() {
 export default function DataTable() {
   const { data, loading } = useLeadsData();
 
-  // 3) Estados da tabela
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -76,7 +75,6 @@ export default function DataTable() {
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
   const [search, setSearch] = React.useState("");
 
-  // 4) Filtrar localmente por nome, email ou WhatsApp
   const filtered = React.useMemo(() => {
     if (!search) return data;
     const q = search.toLowerCase();
@@ -87,7 +85,6 @@ export default function DataTable() {
     );
   }, [search, data]);
 
-  // 5) Handlers de exclusão e edição
   async function handleDelete(id: number) {
     if (!confirm("Confirma exclusão?")) return;
     const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
@@ -103,9 +100,7 @@ export default function DataTable() {
     const ids = Object.keys(rowSelection).map(Number);
     if (!ids.length) return;
     if (!confirm(`Excluir ${ids.length} selecionado(s)?`)) return;
-    await Promise.all(
-      ids.map((id) => fetch(`/api/leads/${id}`, { method: "DELETE" }))
-    );
+    await Promise.all(ids.map((id) => fetch(`/api/leads/${id}`, { method: "DELETE" })));
     toast.success("Excluídos");
     refetch();
   }
@@ -120,99 +115,150 @@ export default function DataTable() {
   }
 
   function refetch() {
-    // força re-fetch de data
     window.location.reload();
   }
 
-  // 6) Exportação
   function handleExportExcel() {
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(filtered);
+    const ws = XLSX.utils.json_to_sheet(
+      filtered.map((l) => ({
+        Nome: l.nome,
+        Email: l.email,
+        WhatsApp: l.whatsapp,
+        Sexo: l.sexo,
+        "Membro Desde": l.membroDesde || "-",
+        Voluntário: l.voluntario ? "Sim" : "Não",
+        "Voluntário Desde": l.voluntarioDesde || "-",
+        Ministério: l.ministerio || "-",
+        Batizado: l.batizado === "sim" || l.batizado === "true" || l.batizado === "Sim" ? "Sim" : "Não",
+        "Batizado Desde": l.batizadoDesde || "-",
+      }))
+    );
     XLSX.utils.book_append_sheet(wb, ws, "Leads");
     XLSX.writeFile(wb, "leads.xlsx");
   }
+  
 
   function handleExportPDF() {
     const doc = new jsPDF();
-    const headers = ["Nome", "Email", "WhatsApp", "Aula", "Cadastrado em"];
+    const headers = [
+      "Nome",
+      "Email",
+      "WhatsApp",
+      "Sexo",
+      "Membro Desde",
+      "Voluntário",
+      "Voluntário Desde",
+      "Ministério",
+      "Batizado",
+      "Batizado Desde",
+      "Data de Cadastro",
+    ];
     const rows = filtered.map((l) => [
       l.nome,
       l.email,
       l.whatsapp,
-      l.tipoAula,
-      new Date(l.criadoEm).toLocaleString("pt-BR"),
+      l.sexo,
+      l.membroDesde || "-",
+      l.voluntario ? "Sim" : "Não",
+      l.voluntarioDesde || "-",
+      l.ministerio || "-",
+      l.batizado === "sim" || l.batizado === "true" || l.batizado === "Sim" ? "Sim" : "Não",
+      l.batizadoDesde || "-",
     ]);
     autoTable(doc, { head: [headers], body: rows });
     doc.save("leads.pdf");
   }
+  
 
-  // 7) Definição de colunas
-  const columns = React.useMemo<ColumnDef<Lead>[]>(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(v) => row.toggleSelected(!!v)}
-          />
-        ),
-        enableSorting: false,
+  const columns = React.useMemo<ColumnDef<Lead>[]>(() => [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(v) => row.toggleSelected(!!v)}
+        />
+      ),
+      enableSorting: false,
+    },
+    { accessorKey: "nome", header: "Nome" },
+    { accessorKey: "email", header: "Email" },
+    { accessorKey: "whatsapp", header: "WhatsApp" },
+    { accessorKey: "sexo", header: "Sexo" },
+    {
+      accessorKey: "membroDesde",
+      header: "Membro Desde",
+      cell: ({ row }) => row.original.membroDesde || "-",
+    },
+    {
+      accessorKey: "voluntario",
+      header: "Voluntário",
+      cell: ({ row }) => row.original.voluntario ? "Sim" : "Não",
+    },
+    {
+      accessorKey: "voluntarioDesde",
+      header: "Voluntário Desde",
+      cell: ({ row }) => row.original.voluntarioDesde || "-",
+    },
+    {
+      accessorKey: "ministerio",
+      header: "Ministério",
+      cell: ({ row }) => row.original.ministerio || "-",
+    },
+    {
+      accessorKey: "batizado",
+      header: "Batizado",
+      cell: ({ row }) => row.original.batizado ? "Sim" : "Não",
+    },
+    {
+      accessorKey: "batizadoDesde",
+      header: "Batizado Desde",
+      cell: ({ row }) => row.original.batizadoDesde || "-",
+    },
+    {
+      id: "actions",
+      header: "Ações",
+      cell: ({ row }) => {
+        const lead = row.original;
+        const phone = lead.whatsapp.replace(/\D/g, "");
+        return (
+          <div className="flex items-center gap-2">
+            <a
+              href={`https://wa.me/${phone}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-500 hover:text-green-400"
+            >
+              <IconBrandWhatsapp size={20} />
+            </a>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="cursor-pointer"
+              onClick={() => handleBulkOrSingleDelete(lead.id)}
+              title={
+                Object.keys(rowSelection).length > 1
+                  ? `Excluir ${Object.keys(rowSelection).length} selecionados`
+                  : "Excluir este lead"
+              }
+            >
+              <IconTrash size={20} className="text-red-500 hover:text-red-400" />
+            </Button>
+          </div>
+        );
       },
-      { accessorKey: "nome", header: "Nome" },
-      { accessorKey: "email", header: "Email" },
-      { accessorKey: "whatsapp", header: "WhatsApp" },
-      { accessorKey: "tipoAula", header: "Aula" },
-      {
-        accessorKey: "criadoEm",
-        header: "Cadastrado em",
-        cell: ({ row }) => new Date(row.original.criadoEm).toLocaleString("pt-BR"),
-      },
-      {
-        id: "actions",
-        header: "Ações",
-        cell: ({ row }) => {
-          const lead = row.original;
-          const phone = lead.whatsapp.replace(/\D/g, "");
-          return (
-            <div className="flex items-center gap-2">
-              <a
-                href={`https://wa.me/${phone}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-green-500 hover:text-green-400"
-              >
-                <IconBrandWhatsapp size={20} />
-              </a>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="cursor-pointer"
-                onClick={() => handleBulkOrSingleDelete(lead.id)}
-                title={
-                  Object.keys(rowSelection).length > 1
-                    ? `Excluir ${Object.keys(rowSelection).length} selecionados`
-                    : "Excluir este lead"
-                }
-              >
-                <IconTrash size={20} className="text-red-500 hover:text-red-400" />
-              </Button>
-            </div>
-          );
-        },
-      },
-    ],
-    [rowSelection]
-  );
+    },
+  ], [rowSelection]);
+  
 
-  // 8) Instancia a tabela
   const table = useReactTable({
     data: filtered,
     columns,
@@ -231,7 +277,6 @@ export default function DataTable() {
 
   if (loading) return <div>Carregando…</div>;
 
-  // 9) Render
   return (
     <>
       <div>

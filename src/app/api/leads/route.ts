@@ -12,10 +12,12 @@ export async function POST(request: Request) {
         whatsapp: data.whatsapp,
         sexo: data.sexo,
         email: data.email,
-        dataNascimento: new Date(data.dataNascimento),
-        camiseta: data.camiseta,
-        tipoAula: data.tipoAula,
-        aceiteLgpd: data.aceiteLgpd,
+        voluntario: data.voluntario,
+        membroDesde: data.membroDesde,
+        voluntarioDesde: data.voluntarioDesde,
+        ministerio: data.ministerio,
+        batizado: data.batizado, 
+        batizadoDesde: data.batizadoDesde,
       },
     });
 
@@ -30,7 +32,7 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const leads = await prisma.lead.findMany({
-      orderBy: { criadoEm: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json(leads);

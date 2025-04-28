@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { FaEdit, FaTrash, FaWhatsapp } from "react-icons/fa";
-import LeadEditModal from "@/app/components/LeadEditModal";
 interface Lead {
   id: number;
   nome: string;
   email: string;
   whatsapp: string;
-  tipoAula: string;
-  criadoEm: string;
-  camiseta: string;
+  sexo: string;
+  membroDesde: string;
+  voluntario: boolean;
+  voluntarioDesde: string;
+  ministerio: string;
+  batizado: boolean; // "sim" | "nao" (ou "true"/"false")
+  batizadoDesde: string;
 }
 
 export function LeadTable({ leads }: { leads: Lead[] }) {
@@ -34,8 +37,6 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
             <th className="px-3 py-2">Nome</th>
             <th className="px-3 py-2">Email</th>
             <th className="px-3 py-2">WhatsApp</th>
-            <th className="px-3 py-2">Aula</th>
-            <th className="px-3 py-2">Cadastrado em</th>
             <th className="px-3 py-2 text-center">Ações</th>
           </tr>
         </thead>
@@ -45,9 +46,7 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
               <td className="px-3 py-2">{lead.nome}</td>
               <td className="px-3 py-2">{lead.email}</td>
               <td className="px-3 py-2">{lead.whatsapp}</td>
-              <td className="px-3 py-2">{lead.tipoAula}</td>
               <td className="px-3 py-2">
-                {new Date(lead.criadoEm).toLocaleString("pt-BR")}
               </td>
               <td className="px-3 py-2 flex justify-center gap-3">
                 <a
@@ -79,13 +78,6 @@ export function LeadTable({ leads }: { leads: Lead[] }) {
         </tbody>
       </table>
 
-      {editingLead && (
-        <LeadEditModal
-          lead={editingLead}
-          onClose={() => setEditingLead(null)}
-          onUpdated={() => window.location.reload()}
-        />
-      )}
     </>
   );
 }
