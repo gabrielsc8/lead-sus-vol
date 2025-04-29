@@ -48,7 +48,7 @@ export default function Formulario() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[url('https://i.imgur.com/0VSM3nf.png')] bg-cover bg-no-repeat">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[url('https://i.imgur.com/qb7f6fm.png')] bg-cover bg-no-repeat">
     <div
       ref={ref}
       className="w-full max-w-2xl bg-white text-white shadow-xl border border-neutral-700 rounded-3xl p-8"
