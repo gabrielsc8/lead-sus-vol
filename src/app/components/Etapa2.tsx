@@ -168,13 +168,20 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
         </button>
 
         <button
-          onClick={onSubmit}
-          disabled={!isValid}
-          className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none ${
-            isValid ? 'bg-purple-800 hover:bg-purple-600 text-white cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          onClick={async () => {
+            if (loading || !isValid) return;
+            setLoading(true);
+            await onSubmit();
+            setLoading(false);
+          }}
+          disabled={!isValid || loading}
+          className={`w-1/2 font-semibold rounded-2xl py-3 px-5 transition ${
+            !isValid || loading
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-purple-800 hover:bg-blue-700 text-white cursor-pointer'
           }`}
         >
-          Enviar →
+          {loading ? 'Enviando...' : 'Enviar'}
         </button>
       </div>
     </motion.div>

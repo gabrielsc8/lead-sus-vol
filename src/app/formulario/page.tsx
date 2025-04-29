@@ -34,22 +34,16 @@ export default function Formulario() {
     }));
   };
   const handleSubmit = async () => {
-    try {
-      const res = await fetch("/api/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-  
-      if (res.ok) {
-        console.log("Lead enviado!");
-      } else {
-        console.error("Erro ao enviar lead");
-      }
-    } catch (error) {
-      console.error("Erro:", error);
+    const res = await fetch("/api/leads", {
+      method: "POST",
+      body: JSON.stringify(form),
+    });
+
+    if (res.ok) {
+      const linkWhatsApp = `https://chat.whatsapp.com/J1zdIPYmfYK6HlMWKKY0Q8`;
+      window.location.href = linkWhatsApp;
+    } else {
+      alert("Erro ao enviar. Tente novamente.");
     }
   };
 
