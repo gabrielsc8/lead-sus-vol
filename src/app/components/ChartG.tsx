@@ -80,7 +80,7 @@ export default function LeadsAreaChart() {
   const chartConfig = {
     inscritos: {
       label: "Inscritos",
-      color: "#22d3ee",
+      color: "#6b3fa0",
     },
   } as const;
 
