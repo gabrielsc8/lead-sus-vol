@@ -61,7 +61,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
         value={form.membroDesde}
         onChange={handleChange}
         placeholder="04/2020"
-        className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+        className="mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
         required
       />
 
@@ -73,7 +73,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
             value={form.voluntarioDesde}
             onChange={handleChange}
             placeholder="07/2021"
-            className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+            className="mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
             required
           />
 
@@ -85,7 +85,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
             name="ministerio"
             value={form.ministerio}
             onChange={handleChange}
-            className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-purple-300 text-purple-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
+            className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-gray-300 text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
             required
           >
             <option value="">Selecione</option>
@@ -116,14 +116,14 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
             value={form.batizadoDesde}
             onChange={handleChange}
             placeholder="03/2019"
-            className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+            className="mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
             required
           />
         </>
       ) : (
         <>
           <label className="block text-xl font-light text-gray-700 mb-2">É batizado? *</label>
-          <div className="flex gap-6 mb-10 text-purple-700 text-xl">
+          <div className="flex gap-6 mb-10 text-gray-700 text-xl">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
@@ -154,7 +154,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
                 value={form.batizadoDesde}
                 onChange={handleChange}
                 placeholder="08/2022"
-                className="mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+                className="mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
                 required
               />
             </>
@@ -165,7 +165,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
       <div className="flex justify-between mt-6">
         <button
           onClick={onBack}
-          className="bg-purple-800 hover:bg-purple-600 text-white cursor-pointer font-bold py-2 px-4 rounded-md"
+          className="bg-gray-800 hover:bg-gray-600 text-white cursor-pointer font-bold py-2 px-4 rounded-md"
         >
           Voltar
         </button>
@@ -181,7 +181,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
           className={`w-1/2 font-semibold rounded-2xl py-3 px-5 transition ${
             !isValid || loading
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-purple-800 hover:bg-blue-700 text-white cursor-pointer'
+              : 'bg-gray-800 hover:bg-blue-700 text-white cursor-pointer'
           }`}
         >
           {loading ? 'Enviando...' : 'Enviar'}

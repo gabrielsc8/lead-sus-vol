@@ -63,7 +63,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
         placeholder="João da Silva"
         value={form.nome}
         onChange={handleChange}
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
+        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
         required
       />
 
@@ -83,7 +83,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
             }
           });
         }}
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none py-2 ${validatePhone(form.whatsapp) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
+        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none py-2 ${validatePhone(form.whatsapp) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
         required
       />
 
@@ -92,7 +92,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
         name="sexo"
         value={form.sexo}
         onChange={handleChange}
-        className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-purple-300 text-purple-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
+        className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-gray-300 text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
         required
       >
         <option value="">Selecione</option>
@@ -103,16 +103,16 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
       <label className="block text-xl font-light text-gray-700">E-mail *</label>
       <input
         name="email"
-        placeholder="alguem@exemplo.com"
+        placeholder="seuemail@exemplo.com"
         value={form.email}
         onChange={handleChange}
         type="email"
-        className={`mb-11 font-light text-2xl w-full border-b bg-transparent text-purple-700 placeholder-purple-300 focus:outline-none py-2 ${validateEmail(form.email) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
+        className={`mb-11 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none py-2 ${validateEmail(form.email) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
         required
       />
 
-      <label className="block text-xl font-light text-gray-700">Você é voluntário? *</label>
-      <div className="flex gap-6 mb-10 text-purple-700 text-xl">
+      <label className="block text-xl font-light text-gray-700">Você já é um voluntário na Comunidade da Fé? *</label>
+      <div className="flex gap-6 mb-10 text-gray-700 text-xl">
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="radio"
@@ -142,7 +142,7 @@ export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
       <button
         onClick={onNext}
         disabled={!isValid}
-        className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none cursor-pointer ${isValid ? 'bg-purple-800 hover:bg-purple-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+        className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none cursor-pointer ${isValid ? 'bg-gray-800 hover:bg-gray-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
       >
         Próximo <span className="text-sm font-light"> ↵</span>
       </button>
