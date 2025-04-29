@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 interface FormData {
   nome: string;
@@ -23,7 +24,9 @@ interface Etapa2Props {
   onSubmit: () => void;
 }
 
+
 export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
+  const [loading, setLoading] = useState(false);
   const isValid = form.membroDesde &&
     (
       form.voluntario
@@ -40,13 +43,13 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
       },
     } as React.ChangeEvent<any>);
   };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
+      
       <p className="text-2sm text-gray-400 mb-2">2 →</p>
       <h2 className="text-xl font-regular mb-6 text-gray-800">
         Agora queremos saber um pouco da sua caminhada com Deus.
