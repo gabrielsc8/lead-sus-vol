@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Formulário de Inscrição",
-  description: "Batismo na Comunidade da Fé",
+  description: "Dia da Visão na Comunidade da Fé",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

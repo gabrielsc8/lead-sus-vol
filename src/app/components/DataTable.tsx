@@ -43,6 +43,7 @@ export const schema = z.object({
   voluntario: z.boolean(),
   voluntarioDesde: z.string(),
   ministerio: z.string(),
+  camiseta: z.string(),
   batizado: z.string(),
   batizadoDesde: z.string(),
   createdAt: z.string(), 
@@ -130,6 +131,7 @@ export default function DataTable() {
         Voluntário: l.voluntario ? "Sim" : "Não",
         "Voluntário Desde": l.voluntarioDesde || "-",
         Ministério: l.ministerio || "-",
+        Camiseta: l.camiseta || "-",
         Batizado: l.batizado === "sim" || l.batizado === "true" || l.batizado === "Sim" ? "Sim" : "Não",
         "Batizado Desde": l.batizadoDesde || "-",
       }))
@@ -163,6 +165,7 @@ export default function DataTable() {
       l.voluntario ? "Sim" : "Não",
       l.voluntarioDesde || "-",
       l.ministerio || "-",
+      l.camiseta || "-",
       l.batizado === "sim" || l.batizado === "true" || l.batizado === "Sim" ? "Sim" : "Não",
       l.batizadoDesde || "-",
     ]);
@@ -222,6 +225,11 @@ export default function DataTable() {
       accessorKey: "batizadoDesde",
       header: "Batizado Desde",
       cell: ({ row }) => row.original.batizadoDesde || "-",
+    },
+    {
+      accessorKey: "Camiseta",
+      header: "Tamanho",
+      cell: ({ row }) => row.original.camiseta || "-",
     },
     {
       id: "actions",

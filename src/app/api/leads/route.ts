@@ -13,6 +13,7 @@ export async function POST(request: Request) {
         sexo: data.sexo,
         email: data.email,
         voluntario: data.voluntario,
+        camiseta: data.camiseta,
         membroDesde: data.membroDesde,
         voluntarioDesde: data.voluntarioDesde,
         ministerio: data.ministerio,

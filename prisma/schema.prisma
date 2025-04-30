@@ -23,6 +23,7 @@ model Lead {
   email          String
   sexo           String
   membroDesde    String?
+  camiseta       String?
   voluntario     Boolean? 
   voluntarioDesde String?
   ministerio     String?

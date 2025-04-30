@@ -49,7 +49,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      
+
       <p className="text-2sm text-gray-400 mb-2">2 →</p>
       <h2 className="text-xl font-regular mb-6 text-gray-800">
         Agora queremos saber um pouco da sua caminhada com Deus.
@@ -76,6 +76,24 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
             className="mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
             required
           />
+
+          <label className="block text-xl font-light text-gray-700 mt-4">
+            Tamanho da camiseta *
+          </label>
+          <select
+            name="camiseta"
+            value={form.camiseta}
+            onChange={handleChange}
+            className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-gray-300 text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="PP">PP</option>
+            <option value="P">P</option>
+            <option value="M">M</option>
+            <option value="G">G</option>
+            <option value="GG">GG</option>
+          </select>
 
           <label className="block text-xl font-light text-gray-700">
             Ministério que serve *
@@ -178,11 +196,10 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
             setLoading(false);
           }}
           disabled={!isValid || loading}
-          className={`w-1/2 font-semibold rounded-2xl py-3 px-5 transition ${
-            !isValid || loading
+          className={`w-1/2 font-semibold rounded-2xl py-3 px-5 transition ${!isValid || loading
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-gray-800 hover:bg-blue-700 text-white cursor-pointer'
-          }`}
+            }`}
         >
           {loading ? 'Enviando...' : 'Enviar'}
         </button>
