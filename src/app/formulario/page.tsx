@@ -19,7 +19,7 @@ export default function Formulario() {
     tipoAula: "",
     membroDesde: "",
     voluntarioDesde: "",
-    ministerio: "",
+    ministerio: [],
     batizado: false,
     batizadoDesde: "",
   });

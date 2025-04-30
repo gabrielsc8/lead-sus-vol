@@ -11,7 +11,7 @@ interface Lead {
   membroDesde: string;
   voluntario: boolean;
   voluntarioDesde: string;
-  ministerio: string;
+  ministerio: string[];
   batizado: boolean; // "sim" | "nao" (ou "true"/"false")
   batizadoDesde: string;
 }

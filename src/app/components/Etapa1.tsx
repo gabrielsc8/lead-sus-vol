@@ -12,7 +12,7 @@ interface FormData {
   camiseta: string;
   membroDesde: string;
   voluntarioDesde: string;
-  ministerio: string;
+  ministerio: string[];
   batizado: boolean; // "sim" | "nao"
   batizadoDesde: string;
 }

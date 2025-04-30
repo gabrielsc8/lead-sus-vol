@@ -26,7 +26,7 @@ model Lead {
   camiseta       String?
   voluntario     Boolean? 
   voluntarioDesde String?
-  ministerio     String?
+  ministerio      Json?     
   batizado       Boolean?
   batizadoDesde  String?
   createdAt      DateTime @default(now())

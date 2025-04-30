@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
-// POST: Cria um novo lead
 export async function POST(request: Request) {
   const data = await request.json();
+
+const toDateOrNull = (str: string) => {
+  if (!str) return null;
+  // espera "YYYY-MM" ou "YYYY-MM-DD"
+  const full = str.length === 7 ? str + "-01" : str;
+  return new Date(full);
+};
+
+const ym = (valor: string) => (valor ? valor : null);
 
   try {
     const lead = await prisma.lead.create({
@@ -14,12 +22,11 @@ export async function POST(request: Request) {
         email: data.email,
         voluntario: data.voluntario,
         camiseta: data.camiseta,
-        membroDesde: data.membroDesde,
-        voluntarioDesde: data.voluntarioDesde,
-        ministerio: data.ministerio,
-        batizado: data.batizado, 
-        batizadoDesde: data.batizadoDesde,
-      },
+        ministerio: data.ministerio,            // array vai direto pro JSON
+        batizado: data.batizado,
+        membroDesde: ym(data.membroDesde),         // "2024-03"
+        voluntarioDesde: ym(data.voluntarioDesde),
+        batizadoDesde: ym(data.batizadoDesde),      },
     });
 
     return NextResponse.json(lead);
