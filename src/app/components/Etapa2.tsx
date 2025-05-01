@@ -1,11 +1,10 @@
-
 /* eslint-disable react/jsx-key */
 "use client";
 
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-// ----- constantes de mês e ano -----
+/* ---------- constantes de mês e ano ---------- */
 const MESES = [
   { value: "01", label: "Janeiro" },
   { value: "02", label: "Fevereiro" },
@@ -21,9 +20,14 @@ const MESES = [
   { value: "12", label: "Dezembro" },
 ];
 
-const ANOS = Array.from({ length: 2025 - 2010 + 1 }, (_, i) => String(2010 + i));
+// gera anos de 2010 até o ano corrente
+const currentYear = new Date().getFullYear();
+const ANOS = Array.from(
+  { length: currentYear - 2010 + 1 },
+  (_, i) => String(2010 + i)
+);
 
-// ----- tipagens -----
+/* ---------- tipagens ---------- */
 interface FormData {
   nome: string;
   whatsapp: string;
@@ -51,20 +55,23 @@ const ministeriosDisponiveis = [
   "Baby", "Coral", "Eventos", "Store",
 ];
 
-// util para combinar ano e mês em YYYY-MM (mesmo se um estiver vazio)
+/* ---------- helpers ---------- */
 const buildYM = (ano: string, mes: string) => `${ano}-${mes}`;
 
+/* ---------- componente ---------- */
 export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
   const [loading, setLoading] = useState(false);
 
   const isValid =
     !!form.membroDesde &&
     (form.voluntario
-      ? form.voluntarioDesde && form.ministerio.length > 0 && form.batizadoDesde
-      : !form.batizado || (form.batizado && form.batizadoDesde));
+      ? (form.voluntarioDesde && form.ministerio.length > 0 && (!form.batizado || (form.batizado && form.batizadoDesde)))
+      : (!form.batizado || (form.batizado && form.batizadoDesde)));
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleChange({ target: { name: "batizado", value: e.target.value === "true" } } as any);
+    handleChange({
+      target: { name: "batizado", value: e.target.value === "true" },
+    } as any);
   };
 
   const toggleMinisterio = (value: string) => {
@@ -75,6 +82,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
     handleChange({ target: { name: "ministerio", value: updated } } as any);
   };
 
+  /* ---- seletor com “tabela” Mês / Ano ---- */
   const handleMonthYear = (
     campo: keyof Pick<FormData, "membroDesde" | "voluntarioDesde" | "batizadoDesde">,
     tipo: "mes" | "ano",
@@ -92,58 +100,71 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
   ) => {
     const [ano, mes] = (form[campo] || "").split("-");
     return (
-      <div className="flex gap-2 mb-8">
-        <select
-          value={mes || ""}
-          onChange={(e) => handleMonthYear(campo, "mes", e.target.value)}
-          required={required}
-          className="w-1/2 text-xl font-light border-b bg-transparent text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
-        >
-          <option value="">Mês</option>
-          {MESES.map((m) => (
-            <option key={m.value} value={m.value}>
-              {m.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={ano || ""}
-          onChange={(e) => handleMonthYear(campo, "ano", e.target.value)}
-          required={required}
-          className="w-1/2 text-xl font-light border-b bg-transparent text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
-        >
-          <option value="">Ano</option>
-          {ANOS.map((a) => (
-            <option key={a} value={a}>
-              {a}
-            </option>
-          ))}
-        </select>
+      <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-500 mb-1">Mês</span>
+          <select
+            value={mes || ""}
+            onChange={(e) => handleMonthYear(campo, "mes", e.target.value)}
+            required={required}
+            className="w-full appearance-none border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 py-2 px-3 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-600"
+          >
+            <option value="">–</option>
+            {MESES.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-500 mb-1">Ano</span>
+          <select
+            value={ano || ""}
+            onChange={(e) => handleMonthYear(campo, "ano", e.target.value)}
+            required={required}
+            className="w-full appearance-none border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 py-2 px-3 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-600"
+          >
+            <option value="">–</option>
+            {ANOS.map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     );
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <p className="text-2sm text-gray-400 mb-2">2 →</p>
       <h2 className="text-xl font-regular mb-6 text-gray-800">
         Agora queremos saber um pouco da sua caminhada com Deus.
       </h2>
 
+      {/* MEMBRO DESDE */}
       <label className="block text-xl font-light text-gray-700">Membro desde *</label>
       {renderSelectYM("membroDesde", true)}
 
-      {form.voluntario ? (
+      {/* BLOCO PARA VOLUNTÁRIO */}
+      {form.voluntario && (
         <>
           <label className="block text-xl font-light text-gray-700">Voluntário desde *</label>
           {renderSelectYM("voluntarioDesde", true)}
 
+          {/* CAMISETA */}
           <label className="block text-xl font-light text-gray-700">Tamanho da camiseta *</label>
           <select
             name="camiseta"
             value={form.camiseta}
             onChange={handleChange}
-            className="mb-8 w-full text-xl font-light border-b bg-transparent text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2"
+            className="mb-8 w-full appearance-none border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 py-2 px-3 text-xl font-light text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-600"
             required
           >
             <option value="">Selecione</option>
@@ -154,6 +175,7 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
             <option value="GG">GG</option>
           </select>
 
+          {/* MINISTÉRIOS */}
           <label className="block text-xl font-light text-gray-700">Ministérios que serve *</label>
           <div className="grid grid-cols-2 gap-2 mb-8">
             {ministeriosDisponiveis.map((min) => (
@@ -167,44 +189,43 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
               </label>
             ))}
           </div>
-
-          <label className="block text-xl font-light text-gray-700">Batizado desde *</label>
-          {renderSelectYM("batizadoDesde", true)}
-        </>
-      ) : (
-        <>
-          <label className="block text-xl font-light text-gray-700 mb-2">É batizado? *</label>
-          <div className="flex gap-6 mb-6 text-gray-700 text-xl">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="batizado"
-                value="true"
-                checked={form.batizado === true}
-                onChange={handleRadioChange}
-              />
-              Sim
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="batizado"
-                value="false"
-                checked={form.batizado === false}
-                onChange={handleRadioChange}
-              />
-              Não
-            </label>
-          </div>
-          {form.batizado && (
-            <>
-              <label className="block text-xl font-light text-gray-700">Batizado desde *</label>
-              {renderSelectYM("batizadoDesde", true)}
-            </>
-          )}
         </>
       )}
 
+      {/* PERGUNTA É BATIZADO (sempre antes do batizadoDesde) */}
+      <label className="block text-xl font-light text-gray-700 mb-2">É batizado? *</label>
+      <div className="flex gap-6 mb-6 text-gray-700 text-xl">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="batizado"
+            value="true"
+            checked={form.batizado === true}
+            onChange={handleRadioChange}
+          />
+          Sim
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="batizado"
+            value="false"
+            checked={form.batizado === false}
+            onChange={handleRadioChange}
+          />
+          Não
+        </label>
+      </div>
+
+      {/* Se marcou “Sim”, mostra o Batizado desde */}
+      {form.batizado && (
+        <>
+          <label className="block text-xl font-light text-gray-700">Batizado desde *</label>
+          {renderSelectYM("batizadoDesde", true)}
+        </>
+      )}
+
+      {/* BOTÕES */}
       <div className="flex justify-between mt-8">
         <button
           onClick={onBack}
@@ -222,7 +243,9 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
           }}
           disabled={!isValid || loading}
           className={`w-1/2 font-semibold rounded-2xl py-3 px-5 transition ${
-            !isValid || loading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-800 hover:bg-blue-700 text-white"
+            !isValid || loading
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-gray-800 hover:bg-blue-700 text-white"
           }`}
         >
           {loading ? "Enviando..." : "Enviar"}
