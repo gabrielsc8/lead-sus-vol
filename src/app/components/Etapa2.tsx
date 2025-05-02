@@ -152,6 +152,38 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
       <label className="block text-xl font-light text-gray-700">Membro desde *</label>
       {renderSelectYM("membroDesde", true)}
 
+      <label className="block text-xl font-light text-gray-700 mb-2">É batizado? *</label>
+      <div className="flex gap-6 mb-6 text-gray-700 text-xl">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="batizado"
+            value="true"
+            checked={form.batizado === true}
+            onChange={handleRadioChange}
+          />
+          Sim
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="batizado"
+            value="false"
+            checked={form.batizado === false}
+            onChange={handleRadioChange}
+          />
+          Não
+        </label>
+      </div>
+
+      {/* Se marcou “Sim”, mostra o Batizado desde */}
+      {form.batizado && (
+        <>
+          <label className="block text-xl font-light text-gray-700">Batizado desde *</label>
+          {renderSelectYM("batizadoDesde", true)}
+        </>
+      )}
+
       {/* BLOCO PARA VOLUNTÁRIO */}
       {form.voluntario && (
         <>
@@ -192,38 +224,6 @@ export function Etapa2({ form, handleChange, onBack, onSubmit }: Etapa2Props) {
         </>
       )}
 
-      {/* PERGUNTA É BATIZADO (sempre antes do batizadoDesde) */}
-      <label className="block text-xl font-light text-gray-700 mb-2">É batizado? *</label>
-      <div className="flex gap-6 mb-6 text-gray-700 text-xl">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="batizado"
-            value="true"
-            checked={form.batizado === true}
-            onChange={handleRadioChange}
-          />
-          Sim
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="batizado"
-            value="false"
-            checked={form.batizado === false}
-            onChange={handleRadioChange}
-          />
-          Não
-        </label>
-      </div>
-
-      {/* Se marcou “Sim”, mostra o Batizado desde */}
-      {form.batizado && (
-        <>
-          <label className="block text-xl font-light text-gray-700">Batizado desde *</label>
-          {renderSelectYM("batizadoDesde", true)}
-        </>
-      )}
 
       {/* BOTÕES */}
       <div className="flex justify-between mt-8">
