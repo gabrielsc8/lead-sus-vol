@@ -1,151 +1,183 @@
-// components/Etapa1.tsx
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import estadosCidadesData from "../lib/estados-cidades.json";
 
+// Interfaces
 interface FormData {
-  nome: string;
-  whatsapp: string;
-  sexo: string;
-  email: string;
-  voluntario: boolean;
-  camiseta: string;
-  membroDesde: string;
-  voluntarioDesde: string;
-  ministerio: string[];
-  batizado: boolean; // "sim" | "nao"
-  batizadoDesde: string;
+  nome: string; dataNascimento: string; sexo: string; whatsapp: string; email: string; estado: string; cidade: string;
 }
-
+interface Estado {
+  sigla: string; nome: string; cidades: string[];
+}
 interface Etapa1Props {
   form: FormData;
   handleChange: (e: React.ChangeEvent<any>) => void;
   onNext: () => void;
+  onBack: () => void;
+  tipoVoluntario: 'existente' | 'interessado' | null;
+  isSubmitting: boolean;
 }
 
-export function Etapa1({ form, handleChange, onNext }: Etapa1Props) {
-  const validateName = (name: string) => /^[A-Za-zÀ-ÿ\s]+$/.test(name);
-  const validatePhone = (phone: string) => /^\(\d{2}\)\s?9?\d{4}-\d{4}$/.test(phone);
-  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitting }: Etapa1Props) {
+  const [cidades, setCidades] = useState<string[]>([]);
+  const [dia, setDia] = useState<string>("");
+  const [mes, setMes] = useState<string>("");
+  const [ano, setAno] = useState<string>("");
 
+  // --- LÓGICA DE VALIDAÇÃO ---
+  // Funções que definem o que é um campo válido
+  const validateName = (name: string) => /^[A-Za-zÀ-ÿ\s]{3,}$/.test(name);
+  const validatePhone = (phone: string) => /^\(\d{2}\)\s9\d{4}-\d{4}$/.test(phone);
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isDateValid = (date: string) => date !== "";
+
+  // A constante `isValid` junta todas as regras. O botão "Próximo" depende dela.
+  // Esta lógica já garante que todos os campos são obrigatórios, exceto o e-mail.
   const isValid =
     validateName(form.nome) &&
+    isDateValid(form.dataNascimento) &&
+    form.sexo !== "" &&
     validatePhone(form.whatsapp) &&
-    form.sexo &&
-    validateEmail(form.email) &&
-    typeof form.voluntario === "boolean";
+    form.estado !== "" &&
+    form.cidade !== "" &&
+    (form.email === "" || validateEmail(form.email));
 
-  const formatPhone = (value: string) => {
-    const digits = value.replace(/\D/g, "").substring(0, 11);
-    const match = digits.match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-    if (!match) return value;
-    const [, d1, d2, d3] = match;
-    let formatted = "";
-    if (d1) formatted += `(${d1}`;
-    if (d1.length === 2) formatted += ") ";
-    if (d2) formatted += d2;
-    if (d3) formatted += `-${d3}`;
-    return formatted;
+  // --- O RESTO DO COMPONENTE ---
+
+  useEffect(() => {
+    if (dia && mes && ano) {
+      const dataCompleta = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+      handleChange({ target: { name: 'dataNascimento', value: dataCompleta } } as any);
+    }
+  }, [dia, mes, ano, handleChange]);
+
+  useEffect(() => {
+    if (form.estado) {
+      const estadoSelecionado = estadosCidadesData.estados.find((e: Estado) => e.sigla === form.estado);
+      if (estadoSelecionado) setCidades(estadoSelecionado.cidades);
+    } else {
+      setCidades([]);
+    }
+  }, [form.estado]);
+
+  const handleEstadoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const siglaEstado = e.target.value;
+    handleChange({ target: { name: "estado", value: siglaEstado } } as any);
+    handleChange({ target: { name: "cidade", value: "" } } as any);
   };
 
+  const formatPhone = (value: string) => {
+    if (!value) return "";
+    value = value.replace(/\D/g, '');
+    value = value.replace(/(\d{2})(\d)/, "($1) $2");
+    value = value.replace(/(\d{5})(\d)/, "$1-$2");
+    return value.substring(0, 15);
+  };
+  
+  const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent";
+
+  const inputStyle = (isValid: boolean, value: string) => {
+    const baseStyles = "font-light text-xl md:text-2xl w-full border-b bg-transparent placeholder-gray-500 py-2 transition-all duration-300 focus:outline-none focus:border-transparent focus:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus:bg-no-repeat focus:bg-bottom focus:bg-[length:100%_2px]";
+    if (value && isValid) return `${baseStyles} border-gray-600 ${gradientTextStyle}`;
+    if (value && !isValid) return `${baseStyles} border-red-500 text-white`;
+    return `${baseStyles} border-gray-600 text-white`;
+  };
+  
+  const hiddenSelectStyle = "w-full text-xl md:text-2xl font-light py-2 bg-transparent text-transparent cursor-pointer focus:outline-none";
+  const selectLabelStyle = (hasValue: boolean) => `absolute inset-0 flex items-center pointer-events-none font-light text-xl md:text-2xl ${hasValue ? gradientTextStyle : 'text-gray-500'}`;
+
+  const primaryButtonStyle = `w-full md:w-auto flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-[#fb349f] bg-gradient-to-r from-[#f34906] to-[#fb349f] text-white hover:brightness-110`;
+  const disabledButtonStyle = `w-full md:w-auto flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3 bg-gray-600 text-gray-400 cursor-not-allowed`;
+  const secondaryButtonStyle = `w-full md:w-auto font-semibold py-3 px-8 rounded-lg text-gray-300 hover:text-white transition-all bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-gray-500`;
+
+  const anos = Array.from({ length: 2025 - 1925 + 1 }, (_, i) => 2025 - i);
+  const meses = Array.from({ length: 12 }, (_, i) => i + 1);
+  const dias = Array.from({ length: 31 }, (_, i) => i + 1);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <p className="text-2sm text-gray-400 mb-2">1 → </p>
-      <h2 className="text-xl font-regular mb-6 text-gray-800">Primeiro de tudo, precisamos das suas informações de contato.</h2>
-
-      <label className="block text-xl text-gray-800 font-light ">Nome Completo *</label>
-      <input
-        name="nome"
-        placeholder="João da Silva"
-        value={form.nome}
-        onChange={handleChange}
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none py-2 ${validateName(form.nome) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
-        required
-      />
-
-      <label className="block text-xl font-light text-gray-700 ">WhatsApp *</label>
-      <input
-        name="whatsapp"
-        placeholder="(11) 96123-4567"
-        value={form.whatsapp}
-        onChange={(e) => {
-          const formattedValue = formatPhone(e.target.value);
-          handleChange({
-            ...e,
-            target: {
-              ...e.target,
-              value: formattedValue,
-              name: "whatsapp"
-            }
-          });
-        }}
-        className={`mb-10 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none py-2 ${validatePhone(form.whatsapp) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
-        required
-      />
-
-      <label className="block text-xl font-light text-gray-700">Sexo *</label>
-      <select
-        name="sexo"
-        value={form.sexo}
-        onChange={handleChange}
-        className="mb-10 w-full text-2xl font-light border-b border-gray-300 bg-transparent placeholder-gray-300 text-gray-700 focus:outline-none focus:border-purple-700 focus:border-b-2 py-2 cursor-pointer"
-        required
-      >
-        <option value="">Selecione</option>
-        <option value="Masculino">Masculino </option>
-        <option value="Feminino">Feminino </option>
-      </select>
-
-      <label className="block text-xl font-light text-gray-700">E-mail *</label>
-      <input
-        name="email"
-        placeholder="seuemail@exemplo.com"
-        value={form.email}
-        onChange={handleChange}
-        type="email"
-        className={`mb-11 font-light text-2xl w-full border-b bg-transparent text-gray-700 placeholder-gray-300 focus:outline-none py-2 ${validateEmail(form.email) ? 'border-gray-300 focus:border-purple-700 focus:border-b-2' : 'border-red-500'}`}
-        required
-      />
-
-      <label className="block text-xl font-light text-gray-700">Você já é um voluntário na Comunidade da Fé? *</label>
-      <div className="flex gap-6 mb-10 text-gray-700 text-xl">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="voluntario"
-            value="true"
-            checked={form.voluntario === true}
-            onChange={() =>
-              handleChange({ target: { name: "voluntario", value: true, type: "radio" } } as any)
-            }
-          />
-          Sim
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="voluntario"
-            value="false"
-            checked={form.voluntario === false}
-            onChange={() =>
-              handleChange({ target: { name: "voluntario", value: false, type: "radio" } } as any)
-            }
-          />
-          Não
-        </label>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <div className="text-center mb-10">
+        <p className={`font-bold text-lg ${gradientTextStyle}`}>ETAPA 1 de 2</p>
+        <h2 className="text-3xl md:text-4xl font-bold mt-2 text-gray-100">Suas informações de contato</h2>
+        <p className="text-gray-400 mt-2">Precisamos desses dados para manter você informado.</p>
       </div>
 
-      <button
-        onClick={onNext}
-        disabled={!isValid}
-        className={`flex items-center gap-2 font-bold rounded-md px-6 py-2 transition focus:outline-none cursor-pointer ${isValid ? 'bg-gray-800 hover:bg-gray-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-      >
-        Próximo <span className="text-sm font-light"> ↵</span>
-      </button>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="nome" className="block text-sm font-semibold text-gray-300 mb-1">Nome Completo *</label>
+            <input id="nome" name="nome" placeholder="Seu nome aqui" value={form.nome} onChange={handleChange} className={inputStyle(validateName(form.nome), form.nome)} required />
+          </div>
+          <div>
+            <label htmlFor="sexo" className="block text-sm font-semibold text-gray-300 mb-1">Sexo *</label>
+            <div className="relative border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
+              <span className={selectLabelStyle(!!form.sexo)}>{form.sexo || "Selecione..."}</span>
+              <select id="sexo" name="sexo" value={form.sexo} onChange={handleChange} className={hiddenSelectStyle} required>
+                <option value=""></option><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-semibold text-gray-300 mb-1">Data de Nascimento *</label>
+          <div className="flex gap-4 w-full">
+            <div className="relative flex-1 border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
+              <span className={selectLabelStyle(!!dia)}>{dia || "Dia"}</span>
+              <select name="dia" value={dia} onChange={(e) => setDia(e.target.value)} className={hiddenSelectStyle} required><option value=""></option>{dias.map(d => <option key={d} value={d}>{d}</option>)}</select>
+            </div>
+            <div className="relative flex-1 border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
+              <span className={selectLabelStyle(!!mes)}>{mes || "Mês"}</span>
+              <select name="mes" value={mes} onChange={(e) => setMes(e.target.value)} className={hiddenSelectStyle} required><option value=""></option>{meses.map(m => <option key={m} value={m}>{m}</option>)}</select>
+            </div>
+            <div className="relative flex-1 border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
+              <span className={selectLabelStyle(!!ano)}>{ano || "Ano"}</span>
+              <select name="ano" value={ano} onChange={(e) => setAno(e.target.value)} className={hiddenSelectStyle} required><option value=""></option>{anos.map(a => <option key={a} value={a}>{a}</option>)}</select>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="whatsapp" className="block text-sm font-semibold text-gray-300 mb-1">whatsapp (Whatsapp) *</label>
+            <input id="whatsapp" name="whatsapp" placeholder="(19) 91234-5678" value={form.whatsapp} onChange={(e) => { e.target.value = formatPhone(e.target.value); handleChange(e); }} className={inputStyle(validatePhone(form.whatsapp), form.whatsapp)} required />
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-1">E-mail</label>
+            <input id="email" name="email" placeholder="seu.email@exemplo.com" type="email" value={form.email} onChange={handleChange} className={inputStyle(validateEmail(form.email) || form.email === '', form.email)} />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="estado" className="block text-sm font-semibold text-gray-300 mb-1">Estado *</label>
+            <div className="relative border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
+              <span className={selectLabelStyle(!!form.estado)}>{form.estado ? estadosCidadesData.estados.find(e => e.sigla === form.estado)?.nome : 'Selecione um estado'}</span>
+              <select id="estado" name="estado" value={form.estado} onChange={handleEstadoChange} className={hiddenSelectStyle} required>
+                <option value=""></option>{estadosCidadesData.estados.map((estado: Estado) => (<option key={estado.sigla} value={estado.sigla}>{estado.nome}</option>))}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label htmlFor="cidade" className="block text-sm font-semibold text-gray-300 mb-1">Cidade *</label>
+            <div className="relative border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
+              <span className={selectLabelStyle(!!form.cidade)}>{form.cidade || 'Escolha um estado'}</span>
+              <select id="cidade" name="cidade" value={form.cidade} onChange={handleChange} className={hiddenSelectStyle} disabled={!form.estado} required>
+                <option value=""></option>{cidades.map((cidade) => (<option key={cidade} value={cidade}>{cidade}</option>))}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex flex-col-reverse md:flex-row justify-between mt-12 gap-4">
+        <button onClick={onBack} className={secondaryButtonStyle}>Voltar</button>
+        <button onClick={onNext} disabled={!isValid || isSubmitting} className={!isValid || isSubmitting ? disabledButtonStyle : primaryButtonStyle}>
+          {isSubmitting ? 'Enviando...' : tipoVoluntario === 'existente' ? 'Próximo →' : 'Enviar Inscrição'}
+        </button>
+      </div>
     </motion.div>
   );
 }

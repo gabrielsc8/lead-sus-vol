@@ -1,8 +1,11 @@
 // layout.tsx
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Saira } from "next/font/google"; 
 
-const inter = Inter({ subsets: ["latin"] });
+const saira = Saira({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+});
 
 export const metadata = {
   title: "Formulário de Inscrição",
@@ -12,7 +15,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="dark">
-      <body className={`${inter.className} bg-background text-foreground`}>
+      <body className={`${saira.className} bg-background text-foreground`}>
         {children}
       </body>
     </html>

@@ -15,10 +15,11 @@ export default async function AdminLeadsPage() {
 
 
   return (
-    <div>
+    <div className="bg-gray-900">
     <Navbar />
     <div className="p-6 max-w-7xl mx-auto text-gray-800">
       <ChartG />
+          <div className="mt-10"/>
         <DataTable />
         <Footer />
     </div>

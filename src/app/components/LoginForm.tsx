@@ -1,111 +1,128 @@
-// src/app/components/LoginForm.tsx
 "use client";
 
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import Image from 'next/image';
-
+import { motion } from "framer-motion"; // Importa o framer-motion
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    if (res?.error) {
-      setError("Email ou senha inválidos");
-    } else {
-      window.location.href = "/admin/leads";
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (res?.error) {
+        setError("Email ou senha inválidos");
+      } else if (res?.ok) {
+        window.location.href = "/admin/leads";
+      }
+    } catch (err) {
+      setError("Ocorreu um erro. Tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent";
+  const primaryButtonStyle = `w-full flex items-center justify-center font-bold rounded-lg px-8 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-[#fb349f] bg-gradient-to-r from-[#f34906] to-[#fb349f] text-white hover:brightness-110`;
+  const disabledButtonStyle = `w-full flex items-center justify-center font-bold rounded-lg px-8 py-3 bg-gray-600 text-gray-400 cursor-not-allowed`;
+
   return (
-    <section className="h-screen w-screen dark:bg-white ">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
-        <a
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+    <section className="min-h-screen w-screen bg-gray-900">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full bg-[#0e142d] shadow-lg border border-gray-800 rounded-2xl p-8 max-w-md"
         >
-          <Image             className="w-37 h-11 mr-2"
-            src="/logo.png"
-            alt="logo"
-            width={37}
-            height={12}
-          />
-
-        </a>
-        <div className="w-full bg-white shadow-xl border border-gray-200 rounded-3xl p-8 w-full max-w-xl overflow-hidden md:mt-0 sm:max-w-md xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-800 md:text-2xl dark:text-gray-800">
-              Acesse sua Dashboard
-            </h1>
-            <form
-              className="space-y-4 md:space-y-6"
-              onSubmit={handleSubmit}
-            >
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-800 dark:text-gray-800"
-                >
-                  Seu Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="seuemail@exemplo.com"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-800 dark:text-gray-800"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-white border border-gray-300 text-gray-800 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <a
-                  href="https://wa.me/5519999422779"
-                  className="text-sm font-medium text-gray-800 hover:underline dark:text-primary-500"
-                >
-                  Esqueci minha senha
-                </a>
-              </div>
-              {error && (
-                <p className="text-red-400 text-sm text-center">{error}</p>
-              )}
-              <button
-                type="submit"
-                className="w-full text-gray-800 border border-gray-200 rounded-3xl bg-white hover:cursor-pointer focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-800"
-
-              >
-                Log in
-              </button>
-            </form>
+          <div className="flex justify-center mb-6">
+            <Image
+              className="w-auto h-10"
+              src="/logo2.png"
+              alt="logo"
+              width={150}
+              height={40}
+            />
           </div>
-        </div>
+
+          <h1 className={`text-2xl font-bold text-center mb-6 ${gradientTextStyle}`}>
+            Acesse seu Painel
+          </h1>
+
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-semibold text-gray-300"
+              >
+                Seu Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="font-light text-lg w-full border-b bg-transparent placeholder-gray-500 py-2 transition-all duration-300 focus:outline-none focus:border-transparent focus:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus:bg-no-repeat focus:bg-bottom focus:bg-[length:100%_2px] border-gray-600 text-white"
+                placeholder="seuemail@exemplo.com"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-semibold text-gray-300"
+              >
+                Senha
+              </label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="font-light text-lg w-full border-b bg-transparent placeholder-gray-500 py-2 transition-all duration-300 focus:outline-none focus:border-transparent focus:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus:bg-no-repeat focus:bg-bottom focus:bg-[length:100%_2px] border-gray-600 text-white"
+                required
+              />
+            </div>
+            <div className="text-right">
+              <a
+                href="https://wa.me/5519999422779"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              >
+                Esqueci minha senha
+              </a>
+            </div>
+
+            {error && (
+              <p className="text-red-500 bg-red-500/10 border border-red-500/30 text-sm text-center py-2 px-3 rounded-lg">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={isLoading ? disabledButtonStyle : primaryButtonStyle}
+            >
+              {isLoading ? 'Entrando...' : 'Log in'}
+            </button>
+          </form>
+        </motion.div>
       </div>
     </section>
   );

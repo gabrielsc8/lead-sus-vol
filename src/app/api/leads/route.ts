@@ -1,51 +1,60 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
+// --- FUNÇÃO PARA CRIAR UM NOVO LEAD (POST) ---
 export async function POST(request: Request) {
-  const data = await request.json();
-
-const toDateOrNull = (str: string) => {
-  if (!str) return null;
-  // espera "YYYY-MM" ou "YYYY-MM-DD"
-  const full = str.length === 7 ? str + "-01" : str;
-  return new Date(full);
-};
-
-const ym = (valor: string) => (valor ? valor : null);
-
   try {
+    const data = await request.json();
+
+    // Validação dos campos obrigatórios
+    if (!data.nome || !data.whatsapp) {
+      return NextResponse.json(
+        { message: "Nome e WhatsApp são obrigatórios." },
+        { status: 400 }
+      );
+    }
+
     const lead = await prisma.lead.create({
       data: {
         nome: data.nome,
         whatsapp: data.whatsapp,
         sexo: data.sexo,
-        email: data.email,
-        voluntario: data.voluntario,
-        camiseta: data.camiseta,
-        ministerio: data.ministerio,            // array vai direto pro JSON
-        batizado: data.batizado,
-        membroDesde: ym(data.membroDesde),         // "2024-03"
-        voluntarioDesde: ym(data.voluntarioDesde),
-        batizadoDesde: ym(data.batizadoDesde),      },
+        email: data.email || null, // Permite que o e-mail seja opcional
+        estado: data.estado,
+        cidade: data.cidade,
+        tipoVoluntario: data.tipoVoluntario,
+        ministerio: data.ministerio,
+        dataNascimento: data.dataNascimento ? new Date(data.dataNascimento) : null,
+      },
     });
 
-    return NextResponse.json(lead);
+    return NextResponse.json(lead, { status: 201 });
+
   } catch (error) {
     console.error("Erro ao salvar lead:", error);
-    return new NextResponse("Erro interno", { status: 500 });
+    return NextResponse.json(
+      { message: "Ocorreu um erro interno ao processar sua inscrição." },
+      { status: 500 }
+    );
   }
 }
 
-// GET: Retorna todos os leads
-export async function GET() {
+
+// --- FUNÇÃO PARA LISTAR TODOS OS LEADS (GET) ---
+// (Esta função estava faltando, causando o erro 405)
+export async function GET(request: Request) {
   try {
     const leads = await prisma.lead.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
-
     return NextResponse.json(leads);
   } catch (error) {
     console.error("Erro ao buscar leads:", error);
-    return new NextResponse("Erro interno do servidor", { status: 500 });
+    return NextResponse.json(
+      { message: "Erro interno do servidor ao buscar leads." },
+      { status: 500 }
+    );
   }
 }

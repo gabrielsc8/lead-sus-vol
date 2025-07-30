@@ -118,3 +118,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+h1, h2, h3 {
+  /* Títulos usarão a fonte Saira */
+  font-family: var(--font-saira);
+}

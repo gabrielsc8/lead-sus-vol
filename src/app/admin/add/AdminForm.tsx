@@ -1,4 +1,3 @@
-// src/app/admin/add/AdminForm.tsx (componente CLIENT)
 'use client';
 import { useState, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';

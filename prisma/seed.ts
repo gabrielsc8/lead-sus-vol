@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   const emailAdmin = "wgabrielsc@icloud.com";
 
-  // Verifica se já existe o admin
   const existingAdmin = await prisma.user.findUnique({
     where: { email: emailAdmin },
   });
