@@ -45,7 +45,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: oklch(8.811% 0.00455 17.93);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -110,6 +110,17 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+
+    -webkit-text-fill-color: var(--font) !important;
+    background-color: linear-gradient(to right, #f34906, #fb349f) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -120,6 +131,5 @@
 }
 
 h1, h2, h3 {
-  /* Títulos usarão a fonte Saira */
   font-family: var(--font-saira);
 }

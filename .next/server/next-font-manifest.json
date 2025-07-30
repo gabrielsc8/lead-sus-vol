@@ -1,15 +1,9 @@
 {
   "app": {
-    "[project]/src/app/_not-found/page": [
+    "[project]/src/app/formulario/page": [
       "static/media/memjYa2wxmKQyPMrZX79wwYZQMhsyuSLiIvSdyqOvg-s.p.6dd25835.woff2"
     ],
-    "[project]/src/app/admin/add/page": [
-      "static/media/memjYa2wxmKQyPMrZX79wwYZQMhsyuSLiIvSdyqOvg-s.p.6dd25835.woff2"
-    ],
-    "[project]/src/app/admin/leads/page": [
-      "static/media/memjYa2wxmKQyPMrZX79wwYZQMhsyuSLiIvSdyqOvg-s.p.6dd25835.woff2"
-    ],
-    "[project]/src/app/login/page": [
+    "[project]/src/app/page": [
       "static/media/memjYa2wxmKQyPMrZX79wwYZQMhsyuSLiIvSdyqOvg-s.p.6dd25835.woff2"
     ]
   },

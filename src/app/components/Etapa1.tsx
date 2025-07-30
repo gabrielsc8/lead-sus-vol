@@ -108,7 +108,7 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="nome" className="block text-sm font-semibold text-gray-300 mb-1">Nome Completo *</label>
-            <input id="nome" name="nome" placeholder="Seu nome aqui" value={form.nome} onChange={handleChange} className={inputStyle(validateName(form.nome), form.nome)} required />
+            <input id="nome" name="nome" autoComplete="off" placeholder="Seu nome aqui" value={form.nome} onChange={handleChange} className={inputStyle(validateName(form.nome), form.nome)} required />
           </div>
           <div>
             <label htmlFor="sexo" className="block text-sm font-semibold text-gray-300 mb-1">Sexo *</label>
@@ -141,12 +141,12 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="whatsapp" className="block text-sm font-semibold text-gray-300 mb-1">whatsapp (Whatsapp) *</label>
-            <input id="whatsapp" name="whatsapp" placeholder="(19) 91234-5678" value={form.whatsapp} onChange={(e) => { e.target.value = formatPhone(e.target.value); handleChange(e); }} className={inputStyle(validatePhone(form.whatsapp), form.whatsapp)} required />
+            <label htmlFor="whatsapp" className="block text-sm font-semibold text-gray-300 mb-1">Celular (Whatsapp) *</label>
+            <input id="whatsapp" autoComplete="off" name="whatsapp" placeholder="(19) 91234-5678" value={form.whatsapp} onChange={(e) => { e.target.value = formatPhone(e.target.value); handleChange(e); }} className={inputStyle(validatePhone(form.whatsapp), form.whatsapp)} required />
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-1">E-mail</label>
-            <input id="email" name="email" placeholder="seu.email@exemplo.com" type="email" value={form.email} onChange={handleChange} className={inputStyle(validateEmail(form.email) || form.email === '', form.email)} />
+            <input id="email" name="email" autoComplete="off" placeholder="seu.email@exemplo.com" type="email" value={form.email} onChange={handleChange} className={inputStyle(validateEmail(form.email) || form.email === '', form.email)} />
           </div>
         </div>
         
