@@ -146,7 +146,7 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-1">E-mail</label>
-            <input id="email" name="email" autoComplete="off" placeholder="seu.email@exemplo.com" type="email" value={form.email} onChange={handleChange} className={inputStyle(validateEmail(form.email) || form.email === '', form.email)} />
+            <input id="email" name="email" autoComplete="new-password" placeholder="seu.email@exemplo.com" type="email" value={form.email} onChange={handleChange} className={inputStyle(validateEmail(form.email) || form.email === '', form.email)} />
           </div>
         </div>
         
