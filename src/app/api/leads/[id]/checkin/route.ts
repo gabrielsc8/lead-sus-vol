@@ -3,7 +3,6 @@ import { prisma } from "@/app/lib/prisma";
 
 export async function PATCH(
   request: Request,
-  // A tipagem correta para o segundo argumento, que contém os parâmetros da URL.
   context: { params: { id: string } } 
 ) {
   try {
