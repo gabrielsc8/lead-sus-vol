@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import estadosCidadesData from "../lib/estados-cidades.json";
 
-// Interfaces
+// Interfaces (sem alteração)
 interface FormData {
   nome: string; dataNascimento: string; sexo: string; whatsapp: string; email: string; estado: string; cidade: string;
 }
@@ -26,15 +26,12 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
   const [mes, setMes] = useState<string>("");
   const [ano, setAno] = useState<string>("");
 
-  // --- LÓGICA DE VALIDAÇÃO ---
-  // Funções que definem o que é um campo válido
+  // Lógica de validação e Handlers (sem alteração)
   const validateName = (name: string) => /^[A-Za-zÀ-ÿ\s]{3,}$/.test(name);
   const validatePhone = (phone: string) => /^\(\d{2}\)\s9\d{4}-\d{4}$/.test(phone);
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isDateValid = (date: string) => date !== "";
 
-  // A constante `isValid` junta todas as regras. O botão "Próximo" depende dela.
-  // Esta lógica já garante que todos os campos são obrigatórios, exceto o e-mail.
   const isValid =
     validateName(form.nome) &&
     isDateValid(form.dataNascimento) &&
@@ -43,8 +40,6 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
     form.estado !== "" &&
     form.cidade !== "" &&
     (form.email === "" || validateEmail(form.email));
-
-  // --- O RESTO DO COMPONENTE ---
 
   useEffect(() => {
     if (dia && mes && ano) {
@@ -76,18 +71,25 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
     return value.substring(0, 15);
   };
   
+  // --- NOVOS ESTILOS ---
   const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent";
+  
+  // Estilo para o <label> (a "pergunta")
+  const labelStyle = `block text-sm font-semibold mb-1 ${gradientTextStyle}`;
 
+  // Estilo para os inputs (agora com texto branco sólido)
   const inputStyle = (isValid: boolean, value: string) => {
     const baseStyles = "font-light text-xl md:text-2xl w-full border-b bg-transparent placeholder-gray-500 py-2 transition-all duration-300 focus:outline-none focus:border-transparent focus:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus:bg-no-repeat focus:bg-bottom focus:bg-[length:100%_2px]";
-    if (value && isValid) return `${baseStyles} border-gray-600 ${gradientTextStyle}`;
-    if (value && !isValid) return `${baseStyles} border-red-500 text-white`;
-    return `${baseStyles} border-gray-600 text-white`;
+    if (value && !isValid) return `${baseStyles} border-red-500 text-white`; // inválido
+    return `${baseStyles} border-gray-600 text-white`; // válido ou vazio
   };
   
   const hiddenSelectStyle = "w-full text-xl md:text-2xl font-light py-2 bg-transparent text-transparent cursor-pointer focus:outline-none";
-  const selectLabelStyle = (hasValue: boolean) => `absolute inset-0 flex items-center pointer-events-none font-light text-xl md:text-2xl ${hasValue ? gradientTextStyle : 'text-gray-500'}`;
-
+  
+  // Estilo para o <span> do select (agora com texto branco sólido)
+  const selectLabelStyle = (hasValue: boolean) => `absolute inset-0 flex items-center pointer-events-none font-light text-xl md:text-2xl ${hasValue ? 'text-white' : 'text-gray-500'}`;
+  
+  // Botões (sem alteração)
   const primaryButtonStyle = `w-full md:w-auto flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-[#fb349f] bg-gradient-to-r from-[#f34906] to-[#fb349f] text-white hover:brightness-110`;
   const disabledButtonStyle = `w-full md:w-auto flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3 bg-gray-600 text-gray-400 cursor-not-allowed`;
   const secondaryButtonStyle = `w-full md:w-auto font-semibold py-3 px-8 rounded-lg text-gray-300 hover:text-white transition-all bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-gray-500`;
@@ -107,11 +109,11 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="nome" className="block text-sm font-semibold text-gray-300 mb-1">Nome Completo *</label>
+            <label htmlFor="nome" className={labelStyle}>Nome Completo *</label>
             <input id="nome" name="nome" autoComplete="off" placeholder="Seu nome aqui" value={form.nome} onChange={handleChange} className={inputStyle(validateName(form.nome), form.nome)} required />
           </div>
           <div>
-            <label htmlFor="sexo" className="block text-sm font-semibold text-gray-300 mb-1">Sexo *</label>
+            <label htmlFor="sexo" className={labelStyle}>Sexo *</label>
             <div className="relative border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
               <span className={selectLabelStyle(!!form.sexo)}>{form.sexo || "Selecione..."}</span>
               <select id="sexo" name="sexo" value={form.sexo} onChange={handleChange} className={hiddenSelectStyle} required>
@@ -122,7 +124,7 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
         </div>
         
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-1">Data de Nascimento *</label>
+          <label className={labelStyle}>Data de Nascimento *</label>
           <div className="flex gap-4 w-full">
             <div className="relative flex-1 border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
               <span className={selectLabelStyle(!!dia)}>{dia || "Dia"}</span>
@@ -141,18 +143,18 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="whatsapp" className="block text-sm font-semibold text-gray-300 mb-1">Celular (Whatsapp) *</label>
+            <label htmlFor="whatsapp" className={labelStyle}>Celular (Whatsapp) *</label>
             <input id="whatsapp" autoComplete="off" name="whatsapp" placeholder="(19) 91234-5678" value={form.whatsapp} onChange={(e) => { e.target.value = formatPhone(e.target.value); handleChange(e); }} className={inputStyle(validatePhone(form.whatsapp), form.whatsapp)} required />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-1">E-mail</label>
+            <label htmlFor="email" className={labelStyle}>E-mail</label>
             <input id="email" name="email" autoComplete="new-password" placeholder="seu.email@exemplo.com" type="email" value={form.email} onChange={handleChange} className={inputStyle(validateEmail(form.email) || form.email === '', form.email)} />
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="estado" className="block text-sm font-semibold text-gray-300 mb-1">Estado *</label>
+            <label htmlFor="estado" className={labelStyle}>Estado *</label>
             <div className="relative border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
               <span className={selectLabelStyle(!!form.estado)}>{form.estado ? estadosCidadesData.estados.find(e => e.sigla === form.estado)?.nome : 'Selecione um estado'}</span>
               <select id="estado" name="estado" value={form.estado} onChange={handleEstadoChange} className={hiddenSelectStyle} required>
@@ -161,7 +163,7 @@ export function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isS
             </div>
           </div>
           <div>
-            <label htmlFor="cidade" className="block text-sm font-semibold text-gray-300 mb-1">Cidade *</label>
+            <label htmlFor="cidade" className={labelStyle}>Cidade *</label>
             <div className="relative border-b border-gray-600 focus-within:border-transparent focus-within:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus-within:bg-no-repeat focus-within:bg-bottom focus-within:bg-[length:100%_2px]">
               <span className={selectLabelStyle(!!form.cidade)}>{form.cidade || 'Escolha um estado'}</span>
               <select id="cidade" name="cidade" value={form.cidade} onChange={handleChange} className={hiddenSelectStyle} disabled={!form.estado} required>

@@ -185,16 +185,12 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
     const [dia, setDia] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [mes, setMes] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [ano, setAno] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
-    // --- LÓGICA DE VALIDAÇÃO ---
-    // Funções que definem o que é um campo válido
+    // Lógica de validação e Handlers (sem alteração)
     const validateName = (name)=>/^[A-Za-zÀ-ÿ\s]{3,}$/.test(name);
     const validatePhone = (phone)=>/^\(\d{2}\)\s9\d{4}-\d{4}$/.test(phone);
     const validateEmail = (email)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isDateValid = (date)=>date !== "";
-    // A constante `isValid` junta todas as regras. O botão "Próximo" depende dela.
-    // Esta lógica já garante que todos os campos são obrigatórios, exceto o e-mail.
     const isValid = validateName(form.nome) && isDateValid(form.dataNascimento) && form.sexo !== "" && validatePhone(form.whatsapp) && form.estado !== "" && form.cidade !== "" && (form.email === "" || validateEmail(form.email));
-    // --- O RESTO DO COMPONENTE ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (dia && mes && ano) {
             const dataCompleta = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
@@ -243,15 +239,20 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
         value = value.replace(/(\d{5})(\d)/, "$1-$2");
         return value.substring(0, 15);
     };
+    // --- NOVOS ESTILOS ---
     const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent";
+    // Estilo para o <label> (a "pergunta")
+    const labelStyle = `block text-sm font-semibold mb-1 ${gradientTextStyle}`;
+    // Estilo para os inputs (agora com texto branco sólido)
     const inputStyle = (isValid, value)=>{
         const baseStyles = "font-light text-xl md:text-2xl w-full border-b bg-transparent placeholder-gray-500 py-2 transition-all duration-300 focus:outline-none focus:border-transparent focus:bg-gradient-to-r from-[#f34906] to-[#fb349f] focus:bg-no-repeat focus:bg-bottom focus:bg-[length:100%_2px]";
-        if (value && isValid) return `${baseStyles} border-gray-600 ${gradientTextStyle}`;
-        if (value && !isValid) return `${baseStyles} border-red-500 text-white`;
-        return `${baseStyles} border-gray-600 text-white`;
+        if (value && !isValid) return `${baseStyles} border-red-500 text-white`; // inválido
+        return `${baseStyles} border-gray-600 text-white`; // válido ou vazio
     };
     const hiddenSelectStyle = "w-full text-xl md:text-2xl font-light py-2 bg-transparent text-transparent cursor-pointer focus:outline-none";
-    const selectLabelStyle = (hasValue)=>`absolute inset-0 flex items-center pointer-events-none font-light text-xl md:text-2xl ${hasValue ? gradientTextStyle : 'text-gray-500'}`;
+    // Estilo para o <span> do select (agora com texto branco sólido)
+    const selectLabelStyle = (hasValue)=>`absolute inset-0 flex items-center pointer-events-none font-light text-xl md:text-2xl ${hasValue ? 'text-white' : 'text-gray-500'}`;
+    // Botões (sem alteração)
     const primaryButtonStyle = `w-full md:w-auto flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-[#fb349f] bg-gradient-to-r from-[#f34906] to-[#fb349f] text-white hover:brightness-110`;
     const disabledButtonStyle = `w-full md:w-auto flex items-center justify-center gap-2 font-bold rounded-lg px-8 py-3 bg-gray-600 text-gray-400 cursor-not-allowed`;
     const secondaryButtonStyle = `w-full md:w-auto font-semibold py-3 px-8 rounded-lg text-gray-300 hover:text-white transition-all bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-gray-500`;
@@ -285,7 +286,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                         children: "ETAPA 1 de 2"
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 102,
+                        lineNumber: 104,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -293,7 +294,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                         children: "Suas informações de contato"
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 103,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -301,13 +302,13 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                         children: "Precisamos desses dados para manter você informado."
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 104,
+                        lineNumber: 106,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                lineNumber: 101,
+                lineNumber: 103,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -320,11 +321,11 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         htmlFor: "nome",
-                                        className: "block text-sm font-semibold text-gray-300 mb-1",
+                                        className: labelStyle,
                                         children: "Nome Completo *"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 110,
+                                        lineNumber: 112,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -338,24 +339,24 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                         required: true
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 111,
+                                        lineNumber: 113,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 109,
+                                lineNumber: 111,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         htmlFor: "sexo",
-                                        className: "block text-sm font-semibold text-gray-300 mb-1",
+                                        className: labelStyle,
                                         children: "Sexo *"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 114,
+                                        lineNumber: 116,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -366,7 +367,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                 children: form.sexo || "Selecione..."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 116,
+                                                lineNumber: 118,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -381,7 +382,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         value: ""
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 118,
+                                                        lineNumber: 120,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -389,7 +390,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         children: "Masculino"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 118,
+                                                        lineNumber: 120,
                                                         columnNumber: 43
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -397,41 +398,41 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         children: "Feminino"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 118,
+                                                        lineNumber: 120,
                                                         columnNumber: 87
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 117,
+                                                lineNumber: 119,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 115,
+                                        lineNumber: 117,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 113,
+                                lineNumber: 115,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 108,
+                        lineNumber: 110,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-sm font-semibold text-gray-300 mb-1",
+                                className: labelStyle,
                                 children: "Data de Nascimento *"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 125,
+                                lineNumber: 127,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -445,7 +446,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                 children: dia || "Dia"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 128,
+                                                lineNumber: 130,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -459,7 +460,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         value: ""
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 129,
+                                                        lineNumber: 131,
                                                         columnNumber: 126
                                                     }, this),
                                                     dias.map((d)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -467,19 +468,19 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                             children: d
                                                         }, d, false, {
                                                             fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                            lineNumber: 129,
+                                                            lineNumber: 131,
                                                             columnNumber: 167
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 129,
+                                                lineNumber: 131,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 127,
+                                        lineNumber: 129,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -490,7 +491,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                 children: mes || "Mês"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 132,
+                                                lineNumber: 134,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -504,7 +505,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         value: ""
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 133,
+                                                        lineNumber: 135,
                                                         columnNumber: 126
                                                     }, this),
                                                     meses.map((m)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -512,19 +513,19 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                             children: m
                                                         }, m, false, {
                                                             fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                            lineNumber: 133,
+                                                            lineNumber: 135,
                                                             columnNumber: 168
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 133,
+                                                lineNumber: 135,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 131,
+                                        lineNumber: 133,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -535,7 +536,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                 children: ano || "Ano"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 136,
+                                                lineNumber: 138,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -549,7 +550,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         value: ""
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 137,
+                                                        lineNumber: 139,
                                                         columnNumber: 126
                                                     }, this),
                                                     anos.map((a)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -557,31 +558,31 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                             children: a
                                                         }, a, false, {
                                                             fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                            lineNumber: 137,
+                                                            lineNumber: 139,
                                                             columnNumber: 167
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 137,
+                                                lineNumber: 139,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 135,
+                                        lineNumber: 137,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 126,
+                                lineNumber: 128,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 124,
+                        lineNumber: 126,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -591,11 +592,11 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         htmlFor: "whatsapp",
-                                        className: "block text-sm font-semibold text-gray-300 mb-1",
+                                        className: labelStyle,
                                         children: "Celular (Whatsapp) *"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 144,
+                                        lineNumber: 146,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -612,30 +613,30 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                         required: true
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 145,
+                                        lineNumber: 147,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 143,
+                                lineNumber: 145,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         htmlFor: "email",
-                                        className: "block text-sm font-semibold text-gray-300 mb-1",
+                                        className: labelStyle,
                                         children: "E-mail"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 148,
+                                        lineNumber: 150,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                         id: "email",
                                         name: "email",
-                                        autoComplete: "off",
+                                        autoComplete: "new-password",
                                         placeholder: "seu.email@exemplo.com",
                                         type: "email",
                                         value: form.email,
@@ -643,19 +644,19 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                         className: inputStyle(validateEmail(form.email) || form.email === '', form.email)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 149,
+                                        lineNumber: 151,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 147,
+                                lineNumber: 149,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 142,
+                        lineNumber: 144,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -665,11 +666,11 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         htmlFor: "estado",
-                                        className: "block text-sm font-semibold text-gray-300 mb-1",
+                                        className: labelStyle,
                                         children: "Estado *"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 155,
+                                        lineNumber: 157,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -680,7 +681,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                 children: form.estado ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$estados$2d$cidades$2e$json__$28$json$29$__["default"].estados.find((e)=>e.sigla === form.estado)?.nome : 'Selecione um estado'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 157,
+                                                lineNumber: 159,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -695,7 +696,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         value: ""
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 159,
+                                                        lineNumber: 161,
                                                         columnNumber: 17
                                                     }, this),
                                                     __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$estados$2d$cidades$2e$json__$28$json$29$__["default"].estados.map((estado)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -703,36 +704,36 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                             children: estado.nome
                                                         }, estado.sigla, false, {
                                                             fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                            lineNumber: 159,
+                                                            lineNumber: 161,
                                                             columnNumber: 96
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 158,
+                                                lineNumber: 160,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 156,
+                                        lineNumber: 158,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 154,
+                                lineNumber: 156,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                         htmlFor: "cidade",
-                                        className: "block text-sm font-semibold text-gray-300 mb-1",
+                                        className: labelStyle,
                                         children: "Cidade *"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 164,
+                                        lineNumber: 166,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -743,7 +744,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                 children: form.cidade || 'Escolha um estado'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 166,
+                                                lineNumber: 168,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -759,7 +760,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                         value: ""
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                        lineNumber: 168,
+                                                        lineNumber: 170,
                                                         columnNumber: 17
                                                     }, this),
                                                     cidades.map((cidade)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -767,37 +768,37 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                                                             children: cidade
                                                         }, cidade, false, {
                                                             fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                            lineNumber: 168,
+                                                            lineNumber: 170,
                                                             columnNumber: 69
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                                lineNumber: 167,
+                                                lineNumber: 169,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                                        lineNumber: 165,
+                                        lineNumber: 167,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                                lineNumber: 163,
+                                lineNumber: 165,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 153,
+                        lineNumber: 155,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                lineNumber: 107,
+                lineNumber: 109,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -809,7 +810,7 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                         children: "Voltar"
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 176,
+                        lineNumber: 178,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -819,19 +820,19 @@ function Etapa1({ form, handleChange, onNext, onBack, tipoVoluntario, isSubmitti
                         children: isSubmitting ? 'Enviando...' : tipoVoluntario === 'existente' ? 'Próximo →' : 'Enviar Inscrição'
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/Etapa1.tsx",
-                        lineNumber: 177,
+                        lineNumber: 179,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/Etapa1.tsx",
-                lineNumber: 175,
+                lineNumber: 177,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/components/Etapa1.tsx",
-        lineNumber: 100,
+        lineNumber: 102,
         columnNumber: 5
     }, this);
 }
@@ -1115,21 +1116,15 @@ function FormularioPage() {
         try {
             const response = await fetch('/api/leads', {
                 method: 'POST',
-                // É uma boa prática incluir os headers ao enviar JSON
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(form)
             });
-            // LÓGICA CORRIGIDA
             if (response.ok) {
-                // SUCESSO: Se a resposta da API for bem-sucedida (status 2xx)
-                // Redireciona para a página de obrigado.
                 router.push('/obrigado');
             } else {
-                // ERRO: Se a resposta da API indicar um erro (status 4xx ou 5xx)
                 const errorData = await response.json();
-                // Joga um erro para ser capturado pelo bloco catch.
                 throw new Error(errorData.message || 'Falha ao enviar o formulário.');
             }
         } catch (err) {
@@ -1165,7 +1160,7 @@ function FormularioPage() {
                         onNext: handleNext
                     }, void 0, false, {
                         fileName: "[project]/src/app/formulario/page.tsx",
-                        lineNumber: 119,
+                        lineNumber: 113,
                         columnNumber: 29
                     }, this),
                     etapa === 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$Etapa1$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Etapa1"], {
@@ -1177,7 +1172,7 @@ function FormularioPage() {
                         isSubmitting: isSubmitting
                     }, void 0, false, {
                         fileName: "[project]/src/app/formulario/page.tsx",
-                        lineNumber: 120,
+                        lineNumber: 114,
                         columnNumber: 29
                     }, this),
                     etapa === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$components$2f$Etapa2$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Etapa2"], {
@@ -1188,7 +1183,7 @@ function FormularioPage() {
                         isSubmitting: isSubmitting
                     }, void 0, false, {
                         fileName: "[project]/src/app/formulario/page.tsx",
-                        lineNumber: 121,
+                        lineNumber: 115,
                         columnNumber: 29
                     }, this)
                 ]
@@ -1201,7 +1196,7 @@ function FormularioPage() {
                         children: "Erro!"
                     }, void 0, false, {
                         fileName: "[project]/src/app/formulario/page.tsx",
-                        lineNumber: 125,
+                        lineNumber: 119,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1212,7 +1207,7 @@ function FormularioPage() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/formulario/page.tsx",
-                        lineNumber: 126,
+                        lineNumber: 120,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1229,41 +1224,41 @@ function FormularioPage() {
                                     children: "Close"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/formulario/page.tsx",
-                                    lineNumber: 128,
+                                    lineNumber: 122,
                                     columnNumber: 135
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                     d: "M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/formulario/page.tsx",
-                                    lineNumber: 128,
+                                    lineNumber: 122,
                                     columnNumber: 155
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/formulario/page.tsx",
-                            lineNumber: 128,
+                            lineNumber: 122,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/formulario/page.tsx",
-                        lineNumber: 127,
+                        lineNumber: 121,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/formulario/page.tsx",
-                lineNumber: 124,
+                lineNumber: 118,
                 columnNumber: 11
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/formulario/page.tsx",
-            lineNumber: 116,
+            lineNumber: 110,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/formulario/page.tsx",
-        lineNumber: 115,
+        lineNumber: 109,
         columnNumber: 5
     }, this);
 }

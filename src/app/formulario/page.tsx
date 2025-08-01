@@ -68,22 +68,16 @@ export default function FormularioPage() {
     try {
       const response = await fetch('/api/leads', {
         method: 'POST',
-        // É uma boa prática incluir os headers ao enviar JSON
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(form),
       });
 
-      // LÓGICA CORRIGIDA
       if (response.ok) {
-        // SUCESSO: Se a resposta da API for bem-sucedida (status 2xx)
-        // Redireciona para a página de obrigado.
         router.push('/obrigado');
       } else {
-        // ERRO: Se a resposta da API indicar um erro (status 4xx ou 5xx)
         const errorData = await response.json();
-        // Joga um erro para ser capturado pelo bloco catch.
         throw new Error(errorData.message || 'Falha ao enviar o formulário.');
       }
 

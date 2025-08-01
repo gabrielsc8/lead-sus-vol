@@ -1,13 +1,15 @@
-// src/app/obrigado/page.tsx
 "use client";
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { IconBrandWhatsapp } from '@tabler/icons-react'; // Ícone para o botão
 
 export default function ObrigadoPage() {
   
   const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent";
-  const primaryButtonStyle = `inline-block font-bold rounded-lg px-8 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-[#fb349f] bg-gradient-to-r from-[#f34906] to-[#fb349f] text-white hover:brightness-110`;
+  const primaryButtonStyle = `inline-flex items-center justify-center gap-3 font-bold rounded-lg px-8 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-[#fb349f] bg-gradient-to-r from-[#f34906] to-[#fb349f] text-white hover:brightness-110`;
+
+  const linkWhatsApp = "https://chat.whatsapp.com/J1zdIPYmfYK6HlMWKKY0Q8"; 
 
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-900 text-center p-4">
@@ -23,16 +25,19 @@ export default function ObrigadoPage() {
           </svg>
         </div>
 
-        <h1 className={`text-4xl md:text-5xl font-bold mb-3 ${gradientTextStyle}`}>
-          Obrigado!
+        <h1 className={`text-5xl md:text-5xl font-bold mb-3 ${gradientTextStyle}`}>
+          Inscrição Concluida!
         </h1>
-        <p className="text-lg text-gray-300 mb-8">
-          Sua inscrição foi recebida com sucesso. <br/>
+
+        <p className="text-2xl font-semibold text-gray-300 mb-8">
+          Para receber as próximas informações, clique no link abaixo e entre no grupo do Whatsapp. 
         </p>
 
-        <Link href="/" className={primaryButtonStyle}>
-          Voltar para o Início
-        </Link>
+        <a href={linkWhatsApp} target="_blank" rel="noopener noreferrer" className={primaryButtonStyle}>
+          <IconBrandWhatsapp size={20} />
+          Entrar no Grupo
+        </a>
+      
       </motion.div>
     </main>
   );
