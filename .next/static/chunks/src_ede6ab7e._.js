@@ -1778,8 +1778,8 @@ function Navbar() {
             label: "Dashboard"
         },
         {
-            href: "/formulario",
-            label: "Formulário"
+            href: "/admin/checkin",
+            label: "Check In"
         },
         {
             href: "/admin/add",

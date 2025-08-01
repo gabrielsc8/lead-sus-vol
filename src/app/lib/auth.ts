@@ -5,7 +5,7 @@ import type { Session } from "next-auth";
 export async function requireAdmin(): Promise<Session> {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user || session.user.role !== "admin") {
+  if (!session?.user || session.user.role !== "SUPER_ADMIN") {
     throw new Error("Acesso negado"); 
   }
 

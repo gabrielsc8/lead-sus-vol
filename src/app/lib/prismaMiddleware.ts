@@ -9,7 +9,7 @@ export async function createUser(data: { name: string; email: string; password: 
       name: data.name,
       email: data.email,
       password: hashedPassword,
-      role: data.role || "admin", 
+      role: data.role || "CHECKIN_ADMIN", 
     },
   });
 }

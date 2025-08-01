@@ -186,14 +186,30 @@ const authOptions = {
                 }
             },
             async authorize (credentials) {
+                // 1. Busca o usuário pelo email
                 const user = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.findUnique({
                     where: {
                         email: credentials?.email
                     }
                 });
-                if (!user || user.role !== "admin") return null;
+                // 2. VERIFICAÇÃO CORRIGIDA
+                // Lista de cargos que podem tentar fazer login no painel
+                const allowedRoles = [
+                    "SUPER_ADMIN",
+                    "CHECKIN_ADMIN"
+                ];
+                if (!user || !user.role || !allowedRoles.includes(user.role)) {
+                    console.error("Tentativa de login falhou: usuário não encontrado ou cargo não permitido.");
+                    return null;
+                }
+                // 3. Compara a senha (isso agora será executado corretamente)
                 const isValid = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$bcryptjs$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["compare"])(credentials.password, user.password);
-                if (!isValid) return null;
+                if (!isValid) {
+                    console.error(`Senha incorreta para o usuário: ${credentials?.email}`);
+                    return null;
+                }
+                // 4. Retorna o usuário se tudo estiver certo
+                console.log(`Login bem-sucedido para: ${user.email} com cargo ${user.role}`);
                 return {
                     id: user.id.toString(),
                     name: user.name,
@@ -209,17 +225,23 @@ const authOptions = {
     },
     callbacks: {
         async jwt ({ token, user }) {
-            if (user) token.role = user.role;
+            if (user) {
+                token.role = user.role;
+                token.id = user.id;
+            }
             return token;
         },
         async session ({ session, token }) {
-            if (session.user) session.user.role = token.role;
+            if (session.user) {
+                session.user.role = token.role;
+                session.user.id = token.id;
+            }
             return session;
         }
     },
-    secret: 'DU923NDU9NWUSAONSD39USI',
+    secret: process.env.NEXTAUTH_SECRET || 'DU923NDU9NWUSAONSD39USI',
     pages: {
-        signIn: "/admin/leads"
+        signIn: "/login"
     }
 };
 }}),

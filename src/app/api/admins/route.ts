@@ -1,59 +1,80 @@
-// src/app/api/admins/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '@/app/lib/prisma';
+// Corrigi o import do Prisma para o caminho que você usou no schema
+import { prisma } from '@/app/lib/prisma'; 
 
 // POST /api/admins  ────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password, role } = await req.json();
 
-    // validações mínimas
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !role) {
       return NextResponse.json(
-        { error: 'Nome, e-mail e senha são obrigatórios.' },
-        { status: 422 }
+        { error: 'Todos os campos, incluindo o cargo, são obrigatórios.' },
+        { status: 422 } // Unprocessable Entity
       );
     }
+    
+    const allowedRoles = ['SUPER_ADMIN', 'CHECKIN_ADMIN'];
+    if (!allowedRoles.includes(role)) {
+        return NextResponse.json(
+            { error: 'Cargo inválido.' },
+            { status: 400 } // Bad Request
+        );
+    }
 
-    // checar duplicidade
+    // Checar duplicidade de e-mail
     const exists = await prisma.user.findUnique({ where: { email } });
     if (exists) {
       return NextResponse.json(
         { error: 'E-mail já cadastrado.' },
-        { status: 409 }
+        { status: 409 } // Conflict
       );
     }
 
+    // Hashear a senha
     const hashed = await bcrypt.hash(password, 12);
 
+    // 3. Criar o usuário com o cargo (role) vindo diretamente da requisição
     await prisma.user.create({
       data: {
         name,
         email,
         password: hashed,
-        role: role ?? 'admin',
+        role: role, // Usa o cargo enviado pelo formulário
       },
     });
 
-    return NextResponse.json({ ok: true }, { status: 201 });
+    return NextResponse.json({ message: 'Administrador criado com sucesso!' }, { status: 201 });
   } catch (err) {
-    console.error(err);
+    console.error("ERRO NA API /api/admins:", err);
     return NextResponse.json(
-      { error: 'Erro interno.' },
+      { error: 'Erro interno do servidor.' },
       { status: 500 }
     );
   }
 }
 
-// opcional: GET para listar (útil na dashboard)
+// GET /api/admins  ────────────────────────────────────────────────
 export async function GET() {
-  const admins = await prisma.user.findMany({
-    where: { role: 'admin' },
-    select: { id: true, name: true, email: true, createdAt: true },
-  });
-  return NextResponse.json(admins);
+  try {
+    const admins = await prisma.user.findMany({
+      where: {
+        OR: [
+          { role: 'SUPER_ADMIN' },
+          { role: 'CHECKIN_ADMIN' },
+        ],
+      },
+      select: { id: true, name: true, email: true, role: true, createdAt: true },
+    });
+    return NextResponse.json(admins);
+  } catch (err) {
+    console.error("ERRO NA API GET /api/admins:", err);
+    return NextResponse.json(
+      { error: 'Erro interno do servidor.' },
+      { status: 500 }
+    );
+  }
 }
 
-// qualquer método diferente de GET/POST ⇒ 405
-export const dynamic = 'force-dynamic'; // se precisar rodar em edge
+export const dynamic = 'force-dynamic';

@@ -90,7 +90,6 @@ if ("TURBOPACK compile-time truthy", 1) globalForPrisma.prisma = prisma;
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-// src/app/api/admins/route.ts
 __turbopack_context__.s({
     "GET": (()=>GET),
     "POST": (()=>POST),
@@ -98,6 +97,7 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$bcryptjs$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/bcryptjs/index.js [app-route] (ecmascript)");
+// Corrigi o import do Prisma para o caminho que você usou no schema
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/lib/prisma.ts [app-route] (ecmascript)");
 ;
 ;
@@ -105,15 +105,27 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$
 async function POST(req) {
     try {
         const { name, email, password, role } = await req.json();
-        // validações mínimas
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !role) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: 'Nome, e-mail e senha são obrigatórios.'
+                error: 'Todos os campos, incluindo o cargo, são obrigatórios.'
             }, {
                 status: 422
-            });
+            } // Unprocessable Entity
+            );
         }
-        // checar duplicidade
+        const allowedRoles = [
+            'SUPER_ADMIN',
+            'CHECKIN_ADMIN'
+        ];
+        if (!allowedRoles.includes(role)) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: 'Cargo inválido.'
+            }, {
+                status: 400
+            } // Bad Request
+            );
+        }
+        // Checar duplicidade de e-mail
         const exists = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.findUnique({
             where: {
                 email
@@ -124,46 +136,67 @@ async function POST(req) {
                 error: 'E-mail já cadastrado.'
             }, {
                 status: 409
-            });
+            } // Conflict
+            );
         }
+        // Hashear a senha
         const hashed = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$bcryptjs$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].hash(password, 12);
+        // 3. Criar o usuário com o cargo (role) vindo diretamente da requisição
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.create({
             data: {
                 name,
                 email,
                 password: hashed,
-                role: role ?? 'admin'
+                role: role
             }
         });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            ok: true
+            message: 'Administrador criado com sucesso!'
         }, {
             status: 201
         });
     } catch (err) {
-        console.error(err);
+        console.error("ERRO NA API /api/admins:", err);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Erro interno.'
+            error: 'Erro interno do servidor.'
         }, {
             status: 500
         });
     }
 }
 async function GET() {
-    const admins = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.findMany({
-        where: {
-            role: 'admin'
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            createdAt: true
-        }
-    });
-    return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(admins);
+    try {
+        // Esta função busca todos os tipos de admins, não apenas SUPER_ADMIN
+        const admins = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].user.findMany({
+            where: {
+                OR: [
+                    {
+                        role: 'SUPER_ADMIN'
+                    },
+                    {
+                        role: 'CHECKIN_ADMIN'
+                    }
+                ]
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true
+            }
+        });
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(admins);
+    } catch (err) {
+        console.error("ERRO NA API GET /api/admins:", err);
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: 'Erro interno do servidor.'
+        }, {
+            status: 500
+        });
+    }
 }
-const dynamic = 'force-dynamic'; // se precisar rodar em edge
+const dynamic = 'force-dynamic';
 }}),
 
 };

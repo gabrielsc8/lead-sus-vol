@@ -9,7 +9,7 @@ import Footer from "@/app/components/Footer";
 export default async function AdminLeadsPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user?.role !== "admin") {
+  if (!session || session.user?.role !== "SUPER_ADMIN") {
     return redirect("/login");
   }
 
@@ -27,5 +27,3 @@ export default async function AdminLeadsPage() {
     </div>
   );
 }
-
-

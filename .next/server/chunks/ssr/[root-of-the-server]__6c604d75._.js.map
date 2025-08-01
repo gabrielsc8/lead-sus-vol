@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 39, "column": 0}, "map": {"version":3,"sources":["file:///Users/wgabrielsc/Documents/GitHub/lead-sus-vol/src/app/components/AuthProvider.tsx"],"sourcesContent":["// src/app/components/AuthProvider.tsx\n\"use client\";\n\nimport { SessionProvider } from \"next-auth/react\";\nimport React from \"react\";\n\ninterface AuthProviderProps {\n  children: React.ReactNode;\n}\n\nexport default function AuthProvider({ children }: AuthProviderProps) {\n  return <SessionProvider>{children}</SessionProvider>;\n}"],"names":[],"mappings":"AAAA,sCAAsC;;;;;AAGtC;AAFA;;;AASe,SAAS,aAAa,EAAE,QAAQ,EAAqB;IAClE,qBAAO,8OAAC,8IAAA,CAAA,kBAAe;kBAAE;;;;;;AAC3B","debugId":null}}]
+}

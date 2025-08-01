@@ -11,7 +11,7 @@ export default function Navbar() {
 
   const links = [
     { href: "/admin/leads", label: "Dashboard" },
-    { href: "/formulario", label: "Formulário" },
+    { href: "/admin/checkin", label: "Check In" },
     { href: "/admin/add", label: "Adicionar Admin" },
   ];
 

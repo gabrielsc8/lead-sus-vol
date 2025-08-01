@@ -7,6 +7,12 @@ datasource db {
   url      = "mysql://comu4259_admin:cfcchurch3673db@comunidadedafe.org:3306/comu4259_diadavisao"
 }
 
+enum Role {
+  USER          
+  CHECKIN_ADMIN 
+  SUPER_ADMIN  
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -15,6 +21,7 @@ model User {
   role      String   @default("user") 
   createdAt DateTime @default(now())
 }
+
 
 model Lead {
   id              Int       @id @default(autoincrement())
@@ -26,6 +33,7 @@ model Lead {
   estado          String?   
   cidade          String?   
   tipoVoluntario  String?   
-  ministerio      Json?     
+  ministerio      Json?
+  dataCheckin     DateTime?    
   createdAt       DateTime  @default(now())
 }
