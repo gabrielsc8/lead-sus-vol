@@ -1,16 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
-export async function PATCH(
-  request: Request,
-  context: { params: { id: string } } 
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
-  try {
-    const id = parseInt(context.params.id, 10);
-    if (isNaN(id)) {
-      return NextResponse.json({ message: "ID inválido." }, { status: 400 });
-    }
+  const id = Number(params.id);
 
+  if (isNaN(id)) {
+    return NextResponse.json({ message: "ID inválido." }, { status: 400 });
+  }
+
+  try {
     const updatedLead = await prisma.lead.update({
       where: { id },
       data: {
@@ -18,16 +19,12 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(updatedLead, { status: 200 });
-
+    return NextResponse.json(updatedLead);
   } catch (error: any) {
-    console.error("Erro ao fazer check-in:", error);
-    if (error.code === 'P2025') {
+    if (error.code === "P2025") {
       return NextResponse.json({ message: "Lead não encontrado." }, { status: 404 });
     }
-    return NextResponse.json(
-      { message: "Erro interno do servidor." },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ message: "Erro interno." }, { status: 500 });
   }
 }
