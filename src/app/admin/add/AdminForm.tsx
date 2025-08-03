@@ -6,7 +6,6 @@ export default function AdminFormClient() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // 1. Estado para controlar o cargo selecionado
   const [role, setRole] = useState('CHECKIN_ADMIN'); // Cargo padrão
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
