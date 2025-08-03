@@ -1,8 +1,9 @@
+// Ex: src/app/lib2/auth.ts
+
 import { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { prisma } from "@/app/lib/prisma";
-import { JWT } from "next-auth/jwt";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,27 +14,24 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials) {
-        // 1. Busca o usuário pelo email
+        if (!credentials?.email || !credentials.password) return null;
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials?.email },
+          where: { email: credentials.email },
         });
 
-        // 2. VERIFICAÇÃO CORRIGIDA
-        // Lista de cargos que podem tentar fazer login no painel
         const allowedRoles = ["SUPER_ADMIN", "CHECKIN_ADMIN"];
         if (!user || !user.role || !allowedRoles.includes(user.role)) {
           console.error("Tentativa de login falhou: usuário não encontrado ou cargo não permitido.");
           return null;
         }
 
-        // 3. Compara a senha (isso agora será executado corretamente)
-        const isValid = await compare(credentials!.password, user.password);
+        const isValid = await compare(credentials.password, user.password);
         if (!isValid) {
-          console.error(`Senha incorreta para o usuário: ${credentials?.email}`);
+          console.error(`Senha incorreta para o usuário: ${credentials.email}`);
           return null;
         }
 
-        // 4. Retorna o usuário se tudo estiver certo
         console.log(`Login bem-sucedido para: ${user.email} com cargo ${user.role}`);
         return {
           id: user.id.toString(),
@@ -49,16 +47,17 @@ export const authOptions: NextAuthOptions = {
     maxAge: 20 * 60, // 20 minutos
   },
   callbacks: {
+    // --- CORREÇÃO APLICADA AQUI ---
+    // Este callback agora apenas permite o login se o usuário tiver um cargo.
+    // O redirecionamento será feito pelo seu LoginForm no frontend.
     async signIn({ user }) {
-      if (user.role === 'SUPER_ADMIN') {
-        return '/admin/leads';
+      if (user.role) {
+        return true; // Permite o login
       }
-      if (user.role === 'CHECKIN_ADMIN') {
-        return '/admin/checkin';
-      }
-      return false;
+      return false; // Nega o login se não tiver cargo
     },
 
+    // Os callbacks jwt e session estão corretos e foram mantidos
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
@@ -75,7 +74,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
-  secret: process.env.NEXTAUTH_SECRET || 'DU923NDU9NWUSAONSD39USI',
+  secret: process.env.NEXTAUTH_SECRET, // Usando variável de ambiente (mais seguro)
   pages: {
     signIn: "/login",
   },

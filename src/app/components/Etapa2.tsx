@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 const ministeriosDisponiveis = [
   "Worship", "Integração", "V.I.P", "Kids", "Creative", "Parking", "Teens", "Rdk Brave",
   "Lounge", "Connect", "Produção", "Cerimonial", "Campus Online", "Casais", "Clínica Da Alma",
-  "Baby", "Coral", "Eventos", "Store",
+  "Baby", "Coral", "Eventos", "Store", "Mulheres de Fé", "Central",
 ];
 
 interface FormData {
