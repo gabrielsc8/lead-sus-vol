@@ -5,7 +5,8 @@ import {
   IconSearch, 
   IconTrash, 
   IconFileExport, 
-  IconBrandWhatsapp 
+  IconBrandWhatsapp,
+  IconFilter // ✨ NOVO: Ícone para o filtro
 } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
@@ -21,6 +22,7 @@ import {
   RowSelectionState,
   SortingState,
   VisibilityState,
+  ColumnFiltersState, // ✨ NOVO: Importar tipo para filtros de coluna
 } from "@tanstack/react-table";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -36,7 +38,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-// 1. Schema atualizado para incluir os novos campos
+// 1. Schema (sem alterações)
 const leadSchema = z.object({
   id: z.number(),
   nome: z.string().nullable().default("Sem nome"),
@@ -53,7 +55,7 @@ const leadSchema = z.object({
 
 type Lead = z.infer<typeof leadSchema>;
 
-// Hook customizado para buscar e gerenciar os dados
+// Hook customizado (sem alterações)
 function useLeadsData() {
   const [data, setData] = React.useState<Lead[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -90,7 +92,11 @@ export default function DataTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = React.useState('');
+  // ✨ NOVO (Passo 1): Estado para filtros de coluna
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
+
+  // Funções de delete (sem alterações)
   async function handleDelete(id: number) {
     if (!confirm("Tem certeza que deseja excluir este lead?")) return;
     try {
@@ -127,11 +133,9 @@ export default function DataTable() {
     setRowSelection({});
     refetch();
   }
-
-  // 3. Funções de exportação atualizadas
+  
+  // Funções de exportação (sem alterações)
   function handleExportExcel() {
-    // ✨ ALTERAÇÃO APLICADA AQUI ✨
-    // Usa getFilteredRowModel para pegar todos os dados que correspondem ao filtro, não apenas os da página atual.
     const dataToExport = table.getFilteredRowModel().rows.map(row => row.original);
     
     if (dataToExport.length === 0) {
@@ -156,7 +160,6 @@ export default function DataTable() {
   }
 
   function handleExportPDF() {
-    // Aplicando a mesma lógica para o PDF, para consistência
     const dataToExport = table.getFilteredRowModel().rows.map(row => row.original);
     
     if (dataToExport.length === 0) {
@@ -181,7 +184,7 @@ export default function DataTable() {
 
   const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent font-semibold";
 
-  // 2. Definição das colunas da tabela ATUALIZADA
+  // Colunas (sem alterações)
   const columns = React.useMemo<ColumnDef<Lead>[]>(() => [
     {
       id: "select",
@@ -260,11 +263,19 @@ export default function DataTable() {
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, globalFilter },
+    // ✨ NOVO (Passo 2): Conectar o estado e o handler à tabela
+    state: { 
+        sorting, 
+        columnVisibility, 
+        rowSelection, 
+        globalFilter, 
+        columnFilters // Adicionar o estado de filtros de coluna
+    },
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters, // Adicionar o handler para atualização dos filtros
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -276,7 +287,8 @@ export default function DataTable() {
       <div className="bg-[#0e142d] p-6 rounded-2xl shadow-lg w-full">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent">Painel de Leads</h1>
-            <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="flex items-center gap-2 w-full md:w-auto flex-wrap"> {/* Adicionado flex-wrap para melhor responsividade */}
+                {/* Filtro de Busca Global */}
                 <div className="relative flex-1 md:flex-none">
                     <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                     <input
@@ -286,6 +298,26 @@ export default function DataTable() {
                         onChange={(e) => setGlobalFilter(e.target.value)}
                     />
                 </div>
+                
+                {/* ✨ NOVO (Passo 3): Componente de Filtro (Dropdown) */}
+                <div className="relative flex-1 md:flex-none">
+                  <IconFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+                  <select
+                    className="w-full appearance-none pl-10 pr-8 py-2 border border-gray-700 bg-gray-800 text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f34906]"
+                    // ✨ NOVO (Passo 4): Ligar o valor do filtro à tabela
+                    value={(table.getColumn('tipoVoluntario')?.getFilterValue() as string) ?? ''}
+                    onChange={(e) =>
+                      // E atualizar o filtro na tabela quando o valor mudar
+                      table.getColumn('tipoVoluntario')?.setFilterValue(e.target.value || undefined)
+                    }
+                  >
+                    <option value="">Status (Todos)</option>
+                    <option value="existente">Existente</option>
+                    <option value="interessado">Interessado</option>
+                  </select>
+                </div>
+
+                {/* Botões de Exportação */}
                 <Button variant="outline" onClick={handleExportExcel} className="gap-2 bg-gray-800 border-gray-700 hover:bg-gray-700">
                     <IconFileExport size={18}/>
                     Excel
@@ -297,6 +329,7 @@ export default function DataTable() {
             </div>
         </div>
 
+        {/* Resto do componente (sem alterações) */}
         {Object.keys(rowSelection).length > 0 && (
             <div className="flex items-center justify-between bg-gray-800 p-3 rounded-lg mb-4">
                 <span className="text-sm font-medium">{Object.keys(rowSelection).length} linha(s) selecionada(s)</span>
