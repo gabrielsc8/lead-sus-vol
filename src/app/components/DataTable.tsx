@@ -130,9 +130,17 @@ export default function DataTable() {
 
   // 3. Funções de exportação atualizadas
   function handleExportExcel() {
-    const dataToExport = table.getRowModel().rows.map(row => row.original);
+    // ✨ ALTERAÇÃO APLICADA AQUI ✨
+    // Usa getFilteredRowModel para pegar todos os dados que correspondem ao filtro, não apenas os da página atual.
+    const dataToExport = table.getFilteredRowModel().rows.map(row => row.original);
+    
+    if (dataToExport.length === 0) {
+        toast.info("Nenhum dado para exportar.");
+        return;
+    }
+
     const ws = XLSX.utils.json_to_sheet(dataToExport.map(l => ({
-        "Nome": l.nome, // Mantive o nome na exportação por ser um dado primário
+        "Nome": l.nome,
         "WhatsApp": l.whatsapp,
         "Email": l.email || "-",
         "Status Voluntário": l.tipoVoluntario || "-",
@@ -148,9 +156,15 @@ export default function DataTable() {
   }
 
   function handleExportPDF() {
-    const doc = new jsPDF();
-    const dataToExport = table.getRowModel().rows.map(row => row.original);
+    // Aplicando a mesma lógica para o PDF, para consistência
+    const dataToExport = table.getFilteredRowModel().rows.map(row => row.original);
     
+    if (dataToExport.length === 0) {
+        toast.info("Nenhum dado para exportar.");
+        return;
+    }
+
+    const doc = new jsPDF();
     autoTable(doc, {
       head: [["Nome", "WhatsApp", "Email", "Status Voluntário", "Ministérios", "Cidade/Estado"]],
       body: dataToExport.map(l => [
