@@ -6,7 +6,8 @@ import {
   IconTrash, 
   IconFileExport, 
   IconBrandWhatsapp,
-  IconFilter // ✨ NOVO: Ícone para o filtro
+  IconFilter,
+  IconBuildingChurch // ✨ NOVO: Ícone para o filtro de ministério
 } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
@@ -22,7 +23,7 @@ import {
   RowSelectionState,
   SortingState,
   VisibilityState,
-  ColumnFiltersState, // ✨ NOVO: Importar tipo para filtros de coluna
+  ColumnFiltersState,
 } from "@tanstack/react-table";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -38,7 +39,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-// 1. Schema (sem alterações)
+// Schema (sem alterações)
 const leadSchema = z.object({
   id: z.number(),
   nome: z.string().nullable().default("Sem nome"),
@@ -92,11 +93,9 @@ export default function DataTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = React.useState('');
-  // ✨ NOVO (Passo 1): Estado para filtros de coluna
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
-
-  // Funções de delete (sem alterações)
+  // Funções (sem alterações)
   async function handleDelete(id: number) {
     if (!confirm("Tem certeza que deseja excluir este lead?")) return;
     try {
@@ -134,7 +133,6 @@ export default function DataTable() {
     refetch();
   }
   
-  // Funções de exportação (sem alterações)
   function handleExportExcel() {
     const dataToExport = table.getFilteredRowModel().rows.map(row => row.original);
     
@@ -182,9 +180,14 @@ export default function DataTable() {
     doc.save("leads_diadavisao.pdf");
   }
 
+  // ✨ NOVO (Passo 1): Gerar dinamicamente a lista de ministérios únicos
+  const uniqueMinisterios = React.useMemo(() => {
+    const allMinisterios = data.flatMap(lead => lead.ministerio || []);
+    return Array.from(new Set(allMinisterios)).sort();
+  }, [data]);
+
   const gradientTextStyle = "bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent font-semibold";
 
-  // Colunas (sem alterações)
   const columns = React.useMemo<ColumnDef<Lead>[]>(() => [
     {
       id: "select",
@@ -215,7 +218,9 @@ export default function DataTable() {
     { 
       accessorKey: "ministerio", 
       header: "Ministérios",
-      cell: ({ row }) => <span className="text-gray-400">{row.original.ministerio?.join(', ') || "-"}</span>
+      cell: ({ row }) => <span className="text-gray-400">{row.original.ministerio?.join(', ') || "-"}</span>,
+      // 🔧 ALTERADO (Passo 2): Especificar a função de filtro para arrays
+      filterFn: 'arrIncludes', 
     },
     { 
       accessorKey: "estado", 
@@ -263,19 +268,18 @@ export default function DataTable() {
   const table = useReactTable({
     data,
     columns,
-    // ✨ NOVO (Passo 2): Conectar o estado e o handler à tabela
     state: { 
         sorting, 
         columnVisibility, 
         rowSelection, 
         globalFilter, 
-        columnFilters // Adicionar o estado de filtros de coluna
+        columnFilters
     },
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters, // Adicionar o handler para atualização dos filtros
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -287,7 +291,7 @@ export default function DataTable() {
       <div className="bg-[#0e142d] p-6 rounded-2xl shadow-lg w-full">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-[#f34906] to-[#fb349f] bg-clip-text text-transparent">Painel de Leads</h1>
-            <div className="flex items-center gap-2 w-full md:w-auto flex-wrap"> {/* Adicionado flex-wrap para melhor responsividade */}
+            <div className="flex items-center gap-2 w-full md:w-auto flex-wrap">
                 {/* Filtro de Busca Global */}
                 <div className="relative flex-1 md:flex-none">
                     <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
@@ -299,21 +303,38 @@ export default function DataTable() {
                     />
                 </div>
                 
-                {/* ✨ NOVO (Passo 3): Componente de Filtro (Dropdown) */}
+                {/* Filtro de Status */}
                 <div className="relative flex-1 md:flex-none">
                   <IconFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                   <select
                     className="w-full appearance-none pl-10 pr-8 py-2 border border-gray-700 bg-gray-800 text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f34906]"
-                    // ✨ NOVO (Passo 4): Ligar o valor do filtro à tabela
                     value={(table.getColumn('tipoVoluntario')?.getFilterValue() as string) ?? ''}
                     onChange={(e) =>
-                      // E atualizar o filtro na tabela quando o valor mudar
                       table.getColumn('tipoVoluntario')?.setFilterValue(e.target.value || undefined)
                     }
                   >
                     <option value="">Status (Todos)</option>
                     <option value="existente">Existente</option>
                     <option value="interessado">Interessado</option>
+                  </select>
+                </div>
+
+                {/* ✨ NOVO (Passo 3): Dropdown de filtro para Ministério */}
+                <div className="relative flex-1 md:flex-none">
+                  <IconBuildingChurch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+                  <select
+                    className="w-full appearance-none pl-10 pr-8 py-2 border border-gray-700 bg-gray-800 text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#f34906]"
+                    value={(table.getColumn('ministerio')?.getFilterValue() as string) ?? ''}
+                    onChange={(e) =>
+                      table.getColumn('ministerio')?.setFilterValue(e.target.value || undefined)
+                    }
+                  >
+                    <option value="">Ministério (Todos)</option>
+                    {uniqueMinisterios.map(ministerio => (
+                      <option key={ministerio} value={ministerio}>
+                        {ministerio.charAt(0).toUpperCase() + ministerio.slice(1)}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
